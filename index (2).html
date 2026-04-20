@@ -210,7 +210,7 @@ footer{background:var(--foot-bg);padding:72px 100px 48px;display:grid;grid-templ
 .cftr{padding:24px 32px;border-top:1px solid var(--cb)}
 .ctr{display:flex;justify-content:space-between;margin-bottom:18px}
 .ctl{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--a2)}
-.cta2{font-family:var(--fd);font-size:26px;color:var(--dk);font-weight:300}
+.cta{font-family:var(--fd);font-size:26px;color:var(--dk);font-weight:300}
 .ckb{width:100%;background:var(--dk);color:var(--bg);border:none;padding:18px;font-family:var(--fb);font-size:11px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .2s;border-radius:2px}
 .ckb:hover{background:var(--a2)}
 
@@ -236,86 +236,7 @@ footer{background:var(--foot-bg);padding:72px 100px 48px;display:grid;grid-templ
 .toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--toast-bg);color:var(--bg);padding:14px 28px;border-radius:40px;font-size:13px;letter-spacing:.06em;z-index:600;transition:transform .3s cubic-bezier(.34,1.56,.64,1),background .4s;white-space:nowrap;font-family:var(--fb)}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
-/* ══════════════════════════════════════
-   CHECKOUT MODAL — matches all themes
-══════════════════════════════════════ */
-.chk-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:800;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s;padding:16px}
-.chk-overlay.open{opacity:1;pointer-events:all}
-.chk-box{background:var(--bg);width:100%;max-width:860px;max-height:92vh;overflow-y:auto;border-radius:4px;display:grid;grid-template-columns:1fr 320px;transform:scale(.95) translateY(24px);transition:transform .4s cubic-bezier(.34,1.56,.64,1),background .4s;box-shadow:0 40px 100px rgba(0,0,0,.35)}
-.chk-overlay.open .chk-box{transform:scale(1) translateY(0)}
-
-/* left — form */
-.chk-form{padding:40px 40px 40px 44px;border-right:1px solid var(--cb)}
-.chk-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px}
-.chk-logo{font-family:var(--fd);font-size:22px;font-weight:300;letter-spacing:.22em;color:var(--dk)}
-.chk-logo em{font-style:italic;color:var(--a1)}
-.chk-close{width:34px;height:34px;border:1px solid var(--cb);border-radius:50%;background:transparent;color:var(--dk);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.chk-close:hover{background:var(--dk);color:var(--bg)}
-.chk-sec-title{font-family:var(--fd);font-size:17px;font-weight:400;color:var(--dk);letter-spacing:.06em;margin-bottom:20px;display:flex;align-items:center;gap:10px}
-.chk-sec-title::after{content:'';flex:1;height:1px;background:var(--cb)}
-.chk-sec-title em{font-style:italic;color:var(--a1)}
-.chk-field{margin-bottom:18px}
-.chk-label{display:block;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--a2);margin-bottom:6px;font-weight:500;font-family:var(--fb)}
-.chk-input{width:100%;background:transparent;border:none;border-bottom:1.5px solid var(--cb);padding:9px 0;font-family:var(--fb);font-size:14px;color:var(--ink);outline:none;transition:border-color .25s}
-.chk-input:focus{border-bottom-color:var(--a1)}
-.chk-input::placeholder{color:var(--a2);opacity:.5;font-size:13px;font-weight:300}
-.chk-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.chk-sep{height:1px;background:var(--cb);margin:24px 0}
-
-/* payment options */
-.pm-opt{display:flex;align-items:flex-start;gap:12px;padding:13px 14px;border:1px solid var(--cb);margin-bottom:8px;cursor:pointer;transition:all .25s;background:var(--bg);border-radius:2px}
-.pm-opt:hover{border-color:var(--a1);background:var(--bg2)}
-.pm-opt.active{border-color:var(--a1);background:var(--bg2)}
-.pm-radio{width:17px;height:17px;border-radius:50%;border:1.5px solid var(--cb);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:border-color .2s}
-.pm-opt.active .pm-radio{border-color:var(--a1)}
-.pm-dot{width:9px;height:9px;border-radius:50%;background:var(--a1);display:none}
-.pm-opt.active .pm-dot{display:block}
-.pm-name{font-size:13px;color:var(--ink);font-weight:400;font-family:var(--fb)}
-.pm-desc{font-size:11px;color:var(--a2);margin-top:2px;letter-spacing:.02em;font-family:var(--fb)}
-
-/* UPI reveal box */
-.upi-box{background:var(--bg2);border:1px solid var(--cb);padding:14px 16px;margin-top:6px;margin-bottom:8px;display:none;border-radius:2px}
-.upi-box.show{display:block}
-.upi-lbl{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--a2);margin-bottom:6px;font-family:var(--fb)}
-.upi-id{font-family:var(--fd);font-size:22px;color:var(--dk);letter-spacing:.04em;font-weight:400}
-.upi-hint{font-size:11px;color:var(--a2);margin-top:5px;line-height:1.6;font-family:var(--fb)}
-.upi-copy{display:inline-block;margin-top:10px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--a1);border:1px solid var(--a1);background:none;padding:6px 14px;cursor:pointer;font-family:var(--fb);transition:all .2s;border-radius:2px}
-.upi-copy:hover{background:var(--a1);color:var(--bg)}
-
-/* CTA */
-.chk-cta{width:100%;background:var(--dk);color:var(--bg);border:none;padding:16px;font-family:var(--fb);font-size:11px;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;transition:background .25s;margin-top:20px;border-radius:2px}
-.chk-cta:hover{background:var(--a2)}
-.chk-cta:active{transform:scale(.99)}
-.chk-secure{text-align:center;font-size:9px;letter-spacing:.15em;color:var(--a2);text-transform:uppercase;margin-top:10px;font-family:var(--fb)}
-
-/* right — order summary */
-.chk-summary{background:var(--bg2);padding:40px 28px;transition:background .5s}
-.sum-ttl{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--a2);margin-bottom:18px;font-family:var(--fb)}
-.sum-item{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--cb)}
-.sum-item-left{display:flex;align-items:center;gap:10px}
-.sum-item-emoji{width:44px;height:54px;background:var(--prod-bg);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;transition:background .5s}
-.sum-item-name{font-family:var(--fd);font-size:15px;color:var(--dk);font-weight:400}
-.sum-item-detail{font-size:10px;color:var(--a2);margin-top:2px;letter-spacing:.05em;font-family:var(--fb)}
-.sum-item-price{font-size:13px;color:var(--dk);font-weight:500;white-space:nowrap;font-family:var(--fb)}
-.sum-row{display:flex;justify-content:space-between;padding:7px 0;font-size:12px;color:var(--a2);font-family:var(--fb)}
-.sum-total{display:flex;justify-content:space-between;padding:14px 0;border-top:1.5px solid var(--dk);margin-top:4px}
-.sum-total-lbl{font-family:var(--fd);font-size:17px;color:var(--dk);font-weight:400;letter-spacing:.04em}
-.sum-total-val{font-size:16px;color:var(--dk);font-weight:500;font-family:var(--fb)}
-.sum-trust{margin-top:20px;padding-top:16px;border-top:1px solid var(--cb)}
-.sum-trust-item{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--a2);margin-bottom:8px;font-family:var(--fb)}
-
-/* SUCCESS screen */
-.chk-success{display:none;padding:60px 40px;text-align:center}
-.chk-success.show{display:block}
-.success-circle{width:60px;height:60px;border-radius:50%;background:var(--dk);color:var(--bg);font-size:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
-.success-h{font-family:var(--fd);font-size:32px;font-weight:300;color:var(--dk);letter-spacing:.04em;margin-bottom:6px}
-.success-sub{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--a1);font-family:var(--fb)}
-.success-details{background:var(--bg2);border:1px solid var(--cb);padding:20px 24px;margin-top:24px;text-align:left;font-size:13px;color:var(--a2);line-height:2.1;font-family:var(--fb);border-radius:2px}
-.success-details strong{color:var(--dk);font-weight:500}
-.success-close-btn{margin-top:24px;background:var(--dk);color:var(--bg);border:none;padding:14px 40px;font-family:var(--fb);font-size:10px;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:background .2s}
-.success-close-btn:hover{background:var(--a2)}
-
-/* ── anims ── */
+/* ANIMS */
 @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
 .fu{animation:fadeUp .7s ease both}
 .fu2{animation:fadeUp .7s .12s ease both}
@@ -339,9 +260,6 @@ footer{background:var(--foot-bg);padding:72px 100px 48px;display:grid;grid-templ
   .promo{margin:0 24px 40px;grid-template-columns:1fr}
   .fb3{padding:16px 24px}
   .hero-l{padding:60px 24px}
-  .chk-box{grid-template-columns:1fr;max-width:480px}
-  .chk-summary{border-top:1px solid var(--cb)}
-  .chk-form{padding:28px 24px}
 }
 </style>
 </head>
@@ -497,18 +415,18 @@ footer{background:var(--foot-bg);padding:72px 100px 48px;display:grid;grid-templ
 </footer>
 <div class="fb3"><span>© 2025 Lumière Fashion. All rights reserved.</span><span>Made with ♥ in India</span></div>
 
-<!-- CART SIDEBAR -->
+<!-- CART -->
 <div class="co" id="co" onclick="toggleCart()"></div>
 <div class="cs" id="cs">
   <div class="chdr"><h3>Your Cart</h3><button class="cx" onclick="toggleCart()">✕</button></div>
   <div class="cbody" id="cbody"><div class="ce2"><span class="ce2-ico">🛍️</span><p class="ce2-t">Your cart is empty</p></div></div>
   <div class="cftr" id="cftr" style="display:none">
-    <div class="ctr"><span class="ctl">Subtotal</span><span class="cta2" id="ct">₹0</span></div>
+    <div class="ctr"><span class="ctl">Subtotal</span><span class="cta" id="ct">₹0</span></div>
     <button class="ckb" onclick="checkout()">Proceed to Checkout →</button>
   </div>
 </div>
 
-<!-- PRODUCT MODAL -->
+<!-- MODAL -->
 <div class="mo" id="mo" onclick="cmc(event)">
   <div class="md">
     <div class="mv" id="mv">👗</div>
@@ -524,115 +442,6 @@ footer{background:var(--foot-bg);padding:72px 100px 48px;display:grid;grid-templ
       </div>
       <button class="madd" onclick="ac()">Add to Cart</button>
     </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════
-     CHECKOUT MODAL
-══════════════════════════════════════ -->
-<div class="chk-overlay" id="chkOverlay" onclick="chkBgClose(event)">
-  <div class="chk-box" id="chkBox">
-
-    <!-- FORM SIDE -->
-    <div class="chk-form" id="chkFormArea">
-      <div class="chk-top">
-        <span class="chk-logo">LU<em>M</em>IÈRE</span>
-        <button class="chk-close" onclick="closeCheckout()">✕</button>
-      </div>
-
-      <!-- Delivery -->
-      <div class="chk-sec-title">Delivery <em>Details</em></div>
-      <div class="chk-field">
-        <label class="chk-label">Full Name</label>
-        <input class="chk-input" id="chk-name" type="text" placeholder="Your full name" />
-      </div>
-      <div class="chk-field">
-        <label class="chk-label">Phone Number</label>
-        <input class="chk-input" id="chk-phone" type="tel" placeholder="+91 XXXXX XXXXX" />
-      </div>
-      <div class="chk-field">
-        <label class="chk-label">Delivery Address</label>
-        <input class="chk-input" id="chk-addr" type="text" placeholder="House / Flat, Street, Area" />
-      </div>
-      <div class="chk-row">
-        <div class="chk-field">
-          <label class="chk-label">City</label>
-          <input class="chk-input" id="chk-city" type="text" placeholder="City" />
-        </div>
-        <div class="chk-field">
-          <label class="chk-label">PIN Code</label>
-          <input class="chk-input" id="chk-pin" type="text" placeholder="000000" maxlength="6" />
-        </div>
-      </div>
-
-      <div class="chk-sep"></div>
-
-      <!-- Payment -->
-      <div class="chk-sec-title">Payment <em>Method</em></div>
-
-      <div class="pm-opt active" id="pm-upi" onclick="choosePM('upi')">
-        <div class="pm-radio"><div class="pm-dot"></div></div>
-        <div>
-          <div class="pm-name">UPI — PhonePe / GPay / Paytm</div>
-          <div class="pm-desc">Instant transfer · Zero fees · Recommended</div>
-        </div>
-      </div>
-      <div class="upi-box show" id="upiBox">
-        <div class="upi-lbl">Pay to UPI ID</div>
-        <div class="upi-id">9482317790@ptyes</div>
-        <div class="upi-hint">Open any UPI app → Send money → Enter this ID → Pay your order total</div>
-        <button class="upi-copy" onclick="copyUPI(this)">Copy UPI ID</button>
-      </div>
-
-      <div class="pm-opt" id="pm-cod" onclick="choosePM('cod')">
-        <div class="pm-radio"><div class="pm-dot"></div></div>
-        <div>
-          <div class="pm-name">Cash on Delivery</div>
-          <div class="pm-desc">Pay when your parcel arrives at your door</div>
-        </div>
-      </div>
-
-      <div class="pm-opt" id="pm-card" onclick="choosePM('card')">
-        <div class="pm-radio"><div class="pm-dot"></div></div>
-        <div>
-          <div class="pm-name">Credit / Debit Card</div>
-          <div class="pm-desc">Visa · Mastercard · RuPay · Net Banking</div>
-        </div>
-      </div>
-
-      <button class="chk-cta" onclick="placeOrder()">Confirm Order →</button>
-      <div class="chk-secure">🔒 &nbsp; SSL Encrypted · 100% Secure Checkout</div>
-    </div>
-
-    <!-- SUCCESS (same left panel, swapped in) -->
-    <div class="chk-success" id="chkSuccess">
-      <div class="success-circle">✓</div>
-      <div class="success-h">Order Confirmed!</div>
-      <div class="success-sub" id="successName"></div>
-      <div class="success-details" id="successDetails"></div>
-      <button class="success-close-btn" onclick="closeCheckout()">Continue Shopping →</button>
-    </div>
-
-    <!-- SUMMARY SIDE -->
-    <div class="chk-summary">
-      <div class="sum-ttl">Order Summary</div>
-      <div id="chkItems"></div>
-      <div style="padding:8px 0 0">
-        <div class="sum-row"><span>Subtotal</span><span id="chkSubtotal">₹0</span></div>
-        <div class="sum-row"><span>Shipping</span><span style="color:var(--a1)">Free</span></div>
-      </div>
-      <div class="sum-total">
-        <span class="sum-total-lbl">Total</span>
-        <span class="sum-total-val" id="chkTotal">₹0</span>
-      </div>
-      <div class="sum-trust">
-        <div class="sum-trust-item">🚀 3–5 day delivery across India</div>
-        <div class="sum-trust-item">🔄 30-day easy returns</div>
-        <div class="sum-trust-item">🔒 Secure encrypted checkout</div>
-        <div class="sum-trust-item">💎 Premium quality guaranteed</div>
-      </div>
-    </div>
-
   </div>
 </div>
 
@@ -656,6 +465,7 @@ const PRODS=[
 
 const THEMES={terracotta:{label:'Terra',em:'👗'},midnight:{label:'Night',em:'🌙'},emerald:{label:'Forest',em:'🌿'},blush:{label:'Blush',em:'🌸'},obsidian:{label:'Gold',em:'💎'}};
 const CK='lumiere_cart_v3',WK='lumiere_wish_v3',TK='lumiere_theme_v3';
+
 let cart=[],wish=[],af='All',curP=null;
 
 function load(){
@@ -664,16 +474,22 @@ function load(){
 function sc(){try{localStorage.setItem(CK,JSON.stringify(cart))}catch(e){}}
 function sw(){try{localStorage.setItem(WK,JSON.stringify(wish))}catch(e){}}
 
-function setTheme(n,dot){applyTheme(n,true);try{localStorage.setItem(TK,n)}catch(e){}}
+function setTheme(n,dot){
+  applyTheme(n,true);
+  try{localStorage.setItem(TK,n)}catch(e){}
+}
 function applyTheme(n,anim){
   document.documentElement.setAttribute('data-theme',n);
   document.querySelectorAll('.ts-dot').forEach(d=>d.classList.remove('on'));
   const dot=document.querySelector(`.ts-dot[data-t="${n}"]`);
   if(dot)dot.classList.add('on');
-  const tn=document.getElementById('themeName');if(tn)tn.textContent=THEMES[n]?.label||n;
+  const tn=document.getElementById('themeName');
+  if(tn)tn.textContent=THEMES[n]?.label||n;
   const em=document.getElementById('heroEm');
-  if(em&&anim){em.style.transform='scale(0) rotate(-20deg)';em.style.opacity='0';setTimeout(()=>{em.textContent=THEMES[n]?.em||'👗';em.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1),opacity .3s';em.style.transform='';em.style.opacity='';},200);}
-  else if(em){em.textContent=THEMES[n]?.em||'👗';}
+  if(em&&anim){
+    em.style.transform='scale(0) rotate(-20deg)';em.style.opacity='0';
+    setTimeout(()=>{em.textContent=THEMES[n]?.em||'👗';em.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1),opacity .3s';em.style.transform='';em.style.opacity='';},200);
+  } else if(em){em.textContent=THEMES[n]?.em||'👗';}
 }
 
 function fp(cat,btn){
@@ -745,83 +561,9 @@ function cmc(e){if(e.target.id==='mo'){document.getElementById('mo').classList.r
 function ps(btn){document.querySelectorAll('.szb').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
 function ac(){if(!curP)return;const sz=document.querySelector('.szb.sel');atc(curP.id,sz?sz.textContent:'S');document.getElementById('mo').classList.remove('open');}
 function subscribe(){const v=document.getElementById('emailInput').value;if(!v||!v.includes('@')){showToast('Enter a valid email ✉️');return;}showToast('You\'re on the list! 🎉');document.getElementById('emailInput').value='';}
+function checkout(){if(!cart.length)return;showToast('Redirecting to checkout 🛒');setTimeout(()=>alert('Demo store — connect Razorpay or Stripe for live checkout!'),800);}
 let tt;
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600);}
-
-/* ── CHECKOUT FUNCTIONS ── */
-function checkout(){
-  if(!cart.length)return;
-  // close cart sidebar first
-  document.getElementById('co').classList.remove('open');
-  document.getElementById('cs').classList.remove('open');
-  // populate summary
-  const tot=cart.reduce((s,i)=>s+i.price*i.qty,0);
-  document.getElementById('chkSubtotal').textContent='₹'+tot.toLocaleString('en-IN');
-  document.getElementById('chkTotal').textContent='₹'+tot.toLocaleString('en-IN');
-  document.getElementById('chkItems').innerHTML=cart.map(i=>`
-    <div class="sum-item">
-      <div class="sum-item-left">
-        <div class="sum-item-emoji">${i.emoji}</div>
-        <div>
-          <div class="sum-item-name">${i.name}</div>
-          <div class="sum-item-detail">Size: ${i.size} · Qty: ${i.qty}</div>
-        </div>
-      </div>
-      <div class="sum-item-price">₹${(i.price*i.qty).toLocaleString('en-IN')}</div>
-    </div>`).join('');
-  // reset form & show modal
-  document.getElementById('chkFormArea').style.display='block';
-  document.getElementById('chkSuccess').classList.remove('show');
-  document.getElementById('chkOverlay').classList.add('open');
-}
-
-function closeCheckout(){
-  document.getElementById('chkOverlay').classList.remove('open');
-}
-
-function chkBgClose(e){
-  if(e.target.id==='chkOverlay')closeCheckout();
-}
-
-function choosePM(t){
-  ['upi','cod','card'].forEach(x=>{
-    document.getElementById('pm-'+x).classList.toggle('active',x===t);
-  });
-  document.getElementById('upiBox').classList.toggle('show',t==='upi');
-}
-
-function copyUPI(btn){
-  navigator.clipboard.writeText('9482317790@ptyes').then(()=>{
-    btn.textContent='Copied!';
-    setTimeout(()=>btn.textContent='Copy UPI ID',2000);
-  }).catch(()=>{
-    btn.textContent='9482317790@ptyes';
-  });
-}
-
-function placeOrder(){
-  const name=document.getElementById('chk-name').value.trim();
-  const phone=document.getElementById('chk-phone').value.trim();
-  const addr=document.getElementById('chk-addr').value.trim();
-  const city=document.getElementById('chk-city').value.trim();
-  const pin=document.getElementById('chk-pin').value.trim();
-  if(!name||!phone||!addr||!city||!pin){showToast('Please fill in all fields ✏️');return;}
-  if(!/^\d{6}$/.test(pin)){showToast('Enter a valid 6-digit PIN code');return;}
-  const pm=document.querySelector('.pm-opt.active .pm-name').textContent;
-  const tot=document.getElementById('chkTotal').textContent;
-  // show success
-  document.getElementById('chkFormArea').style.display='none';
-  document.getElementById('successName').textContent='Thank you, '+name+'! 🎉';
-  document.getElementById('successDetails').innerHTML=
-    `<strong>Delivering to:</strong> ${addr}, ${city} — ${pin}<br>`+
-    `<strong>Phone:</strong> ${phone}<br>`+
-    `<strong>Payment:</strong> ${pm}<br>`+
-    `<strong>Order Total:</strong> ${tot}<br>`+
-    `<strong>Est. Delivery:</strong> 3–5 business days`;
-  document.getElementById('chkSuccess').classList.add('show');
-  // clear cart after order
-  cart=[];sc();ucu();rp();
-}
 
 load();rp();ucu();
 </script>
