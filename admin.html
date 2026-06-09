@@ -1,717 +1,1051 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LUMIÈRE — Admin Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Lumière — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0E0D0C;--bg2:#161513;--bg3:#1E1C1A;--bg4:#252320;
-  --a1:#C4856A;--a2:#A0614A;--a3:#E8C5B0;
-  --ink:#F5F0EA;--ink2:#B8AFA6;--ink3:#7A736C;
-  --border:rgba(196,133,106,0.15);--border2:rgba(196,133,106,0.25);
-  --success:#4CAF8A;--warning:#E8A94A;--danger:#E85D5D;--info:#5B9BD5;
+  --bg:#0F0E0D;--bg2:#181714;--bg3:#221F1C;--bg4:#2C2826;
+  --border:#2E2B28;--border2:#3A3631;
+  --a1:#C4856A;--a2:#E8A87C;--a3:#A06040;
+  --ink:#F5F0EA;--ink2:#B8AFA6;--ink3:#7A7268;
+  --green:#4CAF8A;--red:#E05555;--yellow:#D4AF6A;--blue:#6A9FD4;
   --fd:'Cormorant Garamond',Georgia,serif;
   --fb:'DM Sans',sans-serif;
-  --nav-w:220px;
+  --radius:6px;
 }
-html{scroll-behavior:smooth}
-body{font-family:var(--fb);background:var(--bg);color:var(--ink);min-height:100vh;display:flex;overflow-x:hidden}
+html{font-size:14px}
+body{font-family:var(--fb);background:var(--bg);color:var(--ink);min-height:100vh;display:flex;overflow:hidden}
 
-/* LOGIN */
-#login-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0}
-.login-box{width:380px;padding:52px 44px;border:1px solid var(--border2);background:var(--bg2);border-radius:12px}
-.login-logo{font-family:var(--fd);font-size:32px;font-weight:300;letter-spacing:.2em;color:var(--a3);text-align:center;margin-bottom:6px}
-.login-sub{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);text-align:center;margin-bottom:36px}
-.lf{margin-bottom:18px}
-.lf label{display:block;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
-.lf input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px 16px;color:var(--ink);font-family:var(--fb);font-size:14px;outline:none;transition:border-color .2s}
-.lf input:focus{border-color:var(--a1)}
-.login-btn{width:100%;margin-top:8px;background:var(--a1);color:#fff;border:none;border-radius:6px;padding:13px;font-family:var(--fb);font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s}
-.login-btn:hover{background:var(--a2)}
-.login-err{color:var(--danger);font-size:12px;text-align:center;margin-top:12px;display:none}
-.login-hint{font-size:11px;color:var(--ink3);text-align:center;margin-top:14px}
+/* ── SIDEBAR ── */
+.sidebar{width:220px;min-height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sb-logo{padding:24px 20px 20px;border-bottom:1px solid var(--border)}
+.sb-logo h1{font-family:var(--fd);font-size:22px;font-weight:300;letter-spacing:.2em;color:var(--ink)}
+.sb-logo h1 em{font-style:italic;color:var(--a1)}
+.sb-logo p{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin-top:3px}
+.sb-nav{flex:1;padding:16px 10px;overflow-y:auto}
+.sb-section{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--ink3);padding:10px 10px 6px;margin-top:8px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius);cursor:pointer;font-size:13px;color:var(--ink2);transition:all .2s;margin-bottom:2px;border:1px solid transparent;user-select:none}
+.sb-item:hover{background:var(--bg3);color:var(--ink)}
+.sb-item.active{background:var(--bg3);color:var(--a1);border-color:var(--border2)}
+.sb-item .ico{width:18px;text-align:center;font-size:15px}
+.sb-badge{margin-left:auto;background:var(--a1);color:#fff;font-size:9px;padding:2px 7px;border-radius:20px;font-weight:600}
+.sb-badge.green{background:var(--green)}
+.sb-footer{padding:16px;border-top:1px solid var(--border)}
+.sb-footer p{font-size:11px;color:var(--ink3)}
+.live-dot{display:inline-block;width:7px;height:7px;background:var(--green);border-radius:50%;margin-right:6px;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
 
-/* SIDEBAR */
-.sidebar{width:var(--nav-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:100vh;position:fixed;left:0;top:0;bottom:0;z-index:100}
-.sidebar-logo{padding:28px 24px 20px;border-bottom:1px solid var(--border)}
-.sidebar-logo h1{font-family:var(--fd);font-size:22px;font-weight:300;letter-spacing:.18em;color:var(--a3)}
-.sidebar-logo p{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);margin-top:3px}
-.nav-section{padding:20px 16px 8px;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3)}
-.nav-item{display:flex;align-items:center;gap:11px;padding:10px 16px;margin:2px 8px;border-radius:7px;cursor:pointer;transition:all .2s;font-size:13px;color:var(--ink2);font-weight:400}
-.nav-item:hover{background:var(--bg3);color:var(--ink)}
-.nav-item.active{background:linear-gradient(135deg,rgba(196,133,106,.18),rgba(196,133,106,.06));color:var(--a3);border:1px solid var(--border)}
-.nav-icon{width:16px;height:16px;flex-shrink:0;opacity:.8}
-.nav-badge{margin-left:auto;background:var(--a1);color:#fff;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500}
-.sidebar-footer{margin-top:auto;padding:20px 16px;border-top:1px solid var(--border)}
-.logout-btn{width:100%;background:transparent;border:1px solid var(--border);border-radius:6px;padding:9px;color:var(--ink3);font-family:var(--fb);font-size:12px;cursor:pointer;transition:all .2s}
-.logout-btn:hover{border-color:var(--danger);color:var(--danger)}
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:58px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;flex-shrink:0}
+.tb-title{font-family:var(--fd);font-size:20px;font-weight:300;color:var(--ink)}
+.tb-title em{font-style:italic;color:var(--a1)}
+.tb-right{display:flex;align-items:center;gap:14px}
+.tb-btn{background:var(--bg3);border:1px solid var(--border2);color:var(--ink2);padding:7px 16px;border-radius:var(--radius);font-family:var(--fb);font-size:12px;cursor:pointer;transition:all .2s}
+.tb-btn:hover{border-color:var(--a1);color:var(--a1)}
+.tb-btn.primary{background:var(--a1);border-color:var(--a1);color:#fff}
+.tb-btn.primary:hover{background:var(--a3)}
+.content{flex:1;overflow-y:auto;padding:28px}
 
-/* MAIN */
-.main{margin-left:var(--nav-w);flex:1;min-height:100vh;padding:32px 36px;max-width:calc(100vw - var(--nav-w))}
-.page{display:none}
-.page.active{display:block}
-.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
-.page-title{font-family:var(--fd);font-size:28px;font-weight:300;letter-spacing:.05em;color:var(--ink)}
-.page-title span{color:var(--a1)}
-.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 20px;border-radius:6px;font-family:var(--fb);font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s;border:none}
-.btn-primary{background:var(--a1);color:#fff}
-.btn-primary:hover{background:var(--a2)}
-.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--ink2)}
-.btn-ghost:hover{border-color:var(--a1);color:var(--a1)}
-.btn-danger{background:transparent;border:1px solid rgba(232,93,93,.3);color:var(--danger)}
-.btn-danger:hover{background:rgba(232,93,93,.1)}
-.btn-sm{padding:6px 13px;font-size:11px}
+/* ── VIEWS ── */
+.view{display:none}
+.view.active{display:block}
 
-/* STATS GRID */
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
-.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px 22px;position:relative;overflow:hidden;transition:border-color .2s}
-.stat-card:hover{border-color:var(--border2)}
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:10px 10px 0 0}
-.stat-card.green::before{background:var(--success)}
-.stat-card.amber::before{background:var(--warning)}
-.stat-card.blue::before{background:var(--info)}
-.stat-card.red::before{background:var(--danger)}
-.stat-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
-.stat-value{font-family:var(--fd);font-size:34px;font-weight:300;color:var(--ink);line-height:1}
-.stat-sub{font-size:11px;color:var(--ink3);margin-top:6px}
-.stat-sub span{color:var(--success)}
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.stat-card.c1::before{background:var(--a1)}
+.stat-card.c2::before{background:var(--green)}
+.stat-card.c3::before{background:var(--blue)}
+.stat-card.c4::before{background:var(--yellow)}
+.sc-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.sc-val{font-family:var(--fd);font-size:30px;font-weight:300;color:var(--ink);line-height:1}
+.sc-sub{font-size:11px;color:var(--ink3);margin-top:6px}
+.sc-sub span{color:var(--green)}
+.sc-sub span.down{color:var(--red)}
+.sc-icon{position:absolute;right:18px;top:18px;font-size:22px;opacity:.3}
 
-/* TABLE */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:24px}
-.card-head{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.card-title{font-size:13px;font-weight:500;color:var(--ink);letter-spacing:.04em}
-.card-sub{font-size:11px;color:var(--ink3);margin-top:2px}
-table{width:100%;border-collapse:collapse}
-th{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink3);padding:12px 20px;text-align:left;border-bottom:1px solid var(--border);font-weight:400;background:var(--bg3)}
-td{padding:14px 20px;font-size:13px;color:var(--ink2);border-bottom:1px solid rgba(196,133,106,.06);vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(196,133,106,.03)}
-.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500}
-.badge::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
-.badge-success{background:rgba(76,175,138,.12);color:var(--success)}
-.badge-success::before{background:var(--success)}
-.badge-warning{background:rgba(232,169,74,.12);color:var(--warning)}
-.badge-warning::before{background:var(--warning)}
-.badge-danger{background:rgba(232,93,93,.12);color:var(--danger)}
-.badge-danger::before{background:var(--danger)}
-.badge-info{background:rgba(91,155,213,.12);color:var(--info)}
-.badge-info::before{background:var(--info)}
-.badge-gray{background:rgba(122,115,108,.12);color:var(--ink3)}
-.badge-gray::before{background:var(--ink3)}
-
-/* FORM */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.form-group{display:flex;flex-direction:column;gap:7px}
-.form-group.full{grid-column:1/-1}
-.form-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
-.form-input,.form-select,.form-textarea{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:11px 14px;color:var(--ink);font-family:var(--fb);font-size:13px;outline:none;transition:border-color .2s;width:100%}
-.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--a1)}
-.form-textarea{resize:vertical;min-height:90px}
-.form-select option{background:var(--bg3)}
-.form-section{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:20px}
-.form-section-title{font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--a1);margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--border)}
-
-/* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.open{display:flex}
-.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto}
-.modal-head{padding:22px 26px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg2);z-index:1}
-.modal-title{font-family:var(--fd);font-size:20px;font-weight:400;letter-spacing:.05em}
-.modal-close{background:none;border:none;color:var(--ink3);font-size:22px;cursor:pointer;line-height:1;padding:2px 6px}
-.modal-close:hover{color:var(--ink)}
-.modal-body{padding:26px}
-.modal-foot{padding:16px 26px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
-
-/* SEARCH BAR */
-.search-bar{display:flex;gap:12px;margin-bottom:20px;align-items:center}
-.search-input{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:10px 16px;color:var(--ink);font-family:var(--fb);font-size:13px;outline:none;transition:border-color .2s}
+/* ── TABLE ── */
+.tbl-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.tbl-hdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tbl-hdr h3{font-family:var(--fd);font-size:17px;font-weight:400;color:var(--ink)}
+.tbl-hdr h3 em{font-style:italic;color:var(--a1)}
+.search-input{background:var(--bg3);border:1px solid var(--border2);color:var(--ink);padding:7px 14px;border-radius:var(--radius);font-family:var(--fb);font-size:12px;outline:none;width:200px;transition:border-color .2s}
 .search-input:focus{border-color:var(--a1)}
-.filter-select{background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:10px 14px;color:var(--ink2);font-family:var(--fb);font-size:13px;outline:none;cursor:pointer}
+.search-input::placeholder{color:var(--ink3)}
+table{width:100%;border-collapse:collapse}
+thead tr{border-bottom:1px solid var(--border)}
+th{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3);padding:12px 16px;text-align:left;font-weight:500;white-space:nowrap}
+td{padding:13px 16px;font-size:13px;color:var(--ink2);border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.badge.paid{background:rgba(76,175,138,.15);color:var(--green)}
+.badge.pending{background:rgba(212,175,106,.15);color:var(--yellow)}
+.badge.cod{background:rgba(106,159,212,.15);color:var(--blue)}
+.badge.new{background:rgba(196,133,106,.15);color:var(--a1)}
+.badge.sale{background:rgba(224,85,85,.15);color:var(--red)}
+.badge.delivered{background:rgba(76,175,138,.12);color:var(--green)}
+.badge.processing{background:rgba(106,159,212,.12);color:var(--blue)}
+.badge.cancelled{background:rgba(224,85,85,.12);color:var(--red)}
+.act-btn{background:transparent;border:1px solid var(--border2);color:var(--ink3);padding:5px 12px;border-radius:4px;font-size:11px;cursor:pointer;transition:all .2s;font-family:var(--fb)}
+.act-btn:hover{border-color:var(--a1);color:var(--a1)}
+.act-btn.danger:hover{border-color:var(--red);color:var(--red)}
 
-/* PRODUCT GRID */
-.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:8px}
-.product-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .2s}
-.product-card:hover{border-color:var(--border2)}
-.product-emoji-box{height:110px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:52px;position:relative}
-.product-info{padding:14px}
-.product-name{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.product-cat{font-size:11px;color:var(--ink3);margin-bottom:8px}
-.product-price{font-family:var(--fd);font-size:18px;color:var(--a3);font-weight:400}
-.product-actions{display:flex;gap:6px;margin-top:10px}
-.product-badge{position:absolute;top:8px;right:8px;background:var(--a1);color:#fff;font-size:9px;padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.08em}
+/* ── PROD GRID ── */
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:24px}
+.prod-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .25s}
+.prod-card:hover{border-color:var(--border2)}
+.pc-img{height:130px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:56px;position:relative}
+.pc-badge{position:absolute;top:8px;left:8px;font-size:9px}
+.pc-body{padding:14px 16px}
+.pc-name{font-family:var(--fd);font-size:16px;color:var(--ink);margin-bottom:2px}
+.pc-cat{font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:var(--a1);margin-bottom:10px}
+.pc-price{font-size:14px;color:var(--ink);font-weight:500}
+.pc-was{font-size:12px;color:var(--ink3);text-decoration:line-through;margin-left:6px}
+.pc-actions{display:flex;gap:8px;margin-top:12px}
+.pc-actions button{flex:1;padding:7px;border-radius:4px;border:1px solid var(--border2);background:transparent;cursor:pointer;font-size:11px;letter-spacing:.05em;transition:all .2s;font-family:var(--fb);color:var(--ink2)}
+.pc-actions button:hover{background:var(--a1);border-color:var(--a1);color:#fff}
+.pc-actions button.del:hover{background:var(--red);border-color:var(--red)}
 
-/* ORDER TIMELINE */
-.timeline{padding:0 24px 24px}
-.timeline-step{display:flex;gap:16px;padding:12px 0;position:relative}
-.timeline-step::before{content:'';position:absolute;left:15px;top:32px;bottom:-12px;width:1px;background:var(--border)}
-.timeline-step:last-child::before{display:none}
-.tl-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;border:1px solid var(--border)}
-.tl-dot.done{background:rgba(76,175,138,.15);border-color:var(--success)}
-.tl-dot.active{background:rgba(196,133,106,.15);border-color:var(--a1)}
-.tl-dot.pending{background:var(--bg3)}
-.tl-info{padding-top:4px}
-.tl-label{font-size:13px;color:var(--ink);font-weight:500}
-.tl-time{font-size:11px;color:var(--ink3);margin-top:2px}
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;transform:scale(.96) translateY(12px);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.modal-overlay.open .modal-box{transform:scale(1) translateY(0)}
+.modal-hdr{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-hdr h3{font-family:var(--fd);font-size:20px;font-weight:400;color:var(--ink)}
+.modal-hdr h3 em{font-style:italic;color:var(--a1)}
+.modal-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--border2);background:transparent;color:var(--ink3);cursor:pointer;font-size:14px;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:var(--red);border-color:var(--red);color:#fff}
+.modal-body{padding:24px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-field{margin-bottom:16px}
+.form-label{display:block;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--ink);padding:9px 12px;border-radius:4px;font-family:var(--fb);font-size:13px;outline:none;transition:border-color .2s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--a1)}
+.form-select{cursor:pointer}
+.form-select option{background:var(--bg3)}
+.form-textarea{resize:vertical;min-height:80px}
+.emoji-pick{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.emoji-opt{width:38px;height:38px;border:1px solid var(--border2);border-radius:4px;background:var(--bg3);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.emoji-opt:hover,.emoji-opt.sel{border-color:var(--a1);background:rgba(196,133,106,.1)}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+.btn{padding:9px 22px;border-radius:var(--radius);font-family:var(--fb);font-size:12px;letter-spacing:.05em;cursor:pointer;transition:all .2s;border:1px solid transparent}
+.btn.primary{background:var(--a1);color:#fff}
+.btn.primary:hover{background:var(--a3)}
+.btn.ghost{background:transparent;border-color:var(--border2);color:var(--ink2)}
+.btn.ghost:hover{border-color:var(--a1);color:var(--a1)}
+.btn.danger{background:transparent;border-color:var(--red);color:var(--red)}
+.btn.danger:hover{background:var(--red);color:#fff}
 
-/* PAYMENT CARD */
-.payment-row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid rgba(196,133,106,.06)}
-.payment-row:last-child{border-bottom:none}
-.payment-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.payment-icon.upi{background:rgba(91,155,213,.12)}
-.payment-icon.card{background:rgba(196,133,106,.12)}
-.payment-icon.cod{background:rgba(76,175,138,.12)}
-.payment-details{flex:1}
-.payment-name{font-size:13px;color:var(--ink);font-weight:500}
-.payment-id{font-size:11px;color:var(--ink3);font-family:monospace}
-.payment-amount{font-family:var(--fd);font-size:17px;color:var(--ink);font-weight:400}
-.payment-date{font-size:11px;color:var(--ink3);text-align:right}
+/* ── ORDER DETAIL PANEL ── */
+.order-detail{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:0;overflow:hidden}
+.od-hdr{padding:18px 22px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.od-id{font-family:var(--fd);font-size:18px;color:var(--a1)}
+.od-body{padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.od-section h4{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3);margin-bottom:12px}
+.od-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:1px solid var(--border);color:var(--ink2)}
+.od-row:last-child{border-bottom:none}
+.od-row strong{color:var(--ink);font-weight:500}
 
-/* TOAST */
-.toast{position:fixed;bottom:28px;right:28px;background:var(--bg4);border:1px solid var(--border2);border-radius:8px;padding:13px 20px;color:var(--ink);font-size:13px;z-index:9999;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none}
-.toast.show{transform:translateY(0);opacity:1}
+/* ── TIMELINE ── */
+.timeline{padding:0 22px 22px}
+.tl-item{display:flex;gap:14px;padding:10px 0;position:relative}
+.tl-item::before{content:'';position:absolute;left:11px;top:30px;bottom:-10px;width:1px;background:var(--border)}
+.tl-item:last-child::before{display:none}
+.tl-dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--border2);background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:2px}
+.tl-dot.done{border-color:var(--green);background:rgba(76,175,138,.1);color:var(--green)}
+.tl-dot.active{border-color:var(--a1);background:rgba(196,133,106,.1);color:var(--a1)}
+.tl-info p{font-size:12px;color:var(--ink)}
+.tl-info span{font-size:10px;color:var(--ink3)}
 
-/* SCROLLBAR */
-::-webkit-scrollbar{width:5px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:10px}
+/* ── CHARTS (pure CSS) ── */
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.chart-title{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin-bottom:16px}
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:100px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;background:var(--a1);border-radius:3px 3px 0 0;opacity:.7;transition:opacity .2s;min-height:4px}
+.bar:hover{opacity:1}
+.bar-label{font-size:9px;color:var(--ink3);letter-spacing:.05em}
+.bar-val{font-size:9px;color:var(--a2)}
+.donut-wrap{display:flex;align-items:center;gap:20px}
+.donut{width:90px;height:90px;border-radius:50%;flex-shrink:0}
+.donut-legend{display:flex;flex-direction:column;gap:6px}
+.dl-item{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink2)}
+.dl-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
 
-/* EMPTY STATE */
-.empty{text-align:center;padding:52px 20px;color:var(--ink3)}
-.empty-icon{font-size:40px;margin-bottom:12px;opacity:.5}
-.empty-text{font-size:14px}
+/* ── NOTIFICATIONS ── */
+.notif-list{display:flex;flex-direction:column;gap:10px}
+.notif-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;gap:12px;align-items:flex-start;position:relative;overflow:hidden}
+.notif-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.notif-item.order::before{background:var(--a1)}
+.notif-item.payment::before{background:var(--green)}
+.notif-item.low-stock::before{background:var(--yellow)}
+.notif-item.info::before{background:var(--blue)}
+.notif-ico{font-size:20px;margin-top:1px}
+.notif-body p{font-size:13px;color:var(--ink)}
+.notif-body span{font-size:10px;color:var(--ink3);margin-top:2px;display:block}
+.notif-time{margin-left:auto;font-size:10px;color:var(--ink3);white-space:nowrap}
+.notif-dismiss{background:transparent;border:none;color:var(--ink3);cursor:pointer;font-size:13px;padding:2px 6px;border-radius:3px;transition:color .2s}
+.notif-dismiss:hover{color:var(--red)}
 
-/* RESPONSIVE TOUCH */
-@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr)}.main{padding:20px}}
+/* ── STATUS SELECT ── */
+.status-select{background:var(--bg3);border:1px solid var(--border2);color:var(--ink);padding:4px 8px;border-radius:4px;font-size:11px;cursor:pointer;font-family:var(--fb);outline:none}
+.status-select:focus{border-color:var(--a1)}
+
+/* ── TOAST ── */
+.admin-toast{position:fixed;bottom:24px;right:24px;background:var(--bg3);border:1px solid var(--border2);color:var(--ink);padding:12px 20px;border-radius:var(--radius);font-size:13px;z-index:900;transform:translateY(20px);opacity:0;transition:all .3s;border-left:3px solid var(--a1);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.admin-toast.show{transform:translateY(0);opacity:1}
+.admin-toast.success{border-left-color:var(--green)}
+.admin-toast.error{border-left-color:var(--red)}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:60px 20px;color:var(--ink3)}
+.empty-ico{font-size:44px;display:block;margin-bottom:12px;opacity:.4}
+.empty p{font-size:14px}
+
+/* ── CONFIRM DIALOG ── */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:600;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.confirm-overlay.open{opacity:1;pointer-events:all}
+.confirm-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:28px 30px;max-width:360px;width:100%;text-align:center}
+.confirm-box h4{font-family:var(--fd);font-size:20px;color:var(--ink);margin-bottom:8px}
+.confirm-box p{font-size:13px;color:var(--ink2);margin-bottom:24px;line-height:1.6}
+.confirm-actions{display:flex;gap:10px;justify-content:center}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--a3)}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">LUMIÈRE</div>
-    <div class="login-sub">Admin Dashboard</div>
-    <div class="lf">
-      <label>Username</label>
-      <input type="text" id="l-user" placeholder="admin" autocomplete="username">
-    </div>
-    <div class="lf">
-      <label>Password</label>
-      <input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <button class="login-btn" onclick="doLogin()">Sign In</button>
-    <div class="login-err" id="login-err">Incorrect credentials. Try admin / admin123</div>
-    <div class="login-hint">Default: admin / admin123</div>
-  </div>
-</div>
-
 <!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="sidebar-logo">
-    <h1>LUMIÈRE</h1>
+  <div class="sb-logo">
+    <h1>LU<em>M</em>IÈRE</h1>
     <p>Admin Panel</p>
   </div>
-  <div class="nav-section">Overview</div>
-  <div class="nav-item active" onclick="nav('dashboard',this)">
-    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
-    Dashboard
-  </div>
-  <div class="nav-section">Store</div>
-  <div class="nav-item" onclick="nav('products',this)">
-    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2h2l2 6h6l1-4H5"/><circle cx="7" cy="13" r="1"/><circle cx="12" cy="13" r="1"/></svg>
-    Products
-    <span class="nav-badge" id="nb-products">12</span>
-  </div>
-  <div class="nav-item" onclick="nav('orders',this)">
-    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1"/><path d="M5 6h6M5 9h4"/></svg>
-    Orders
-    <span class="nav-badge" id="nb-orders">8</span>
-  </div>
-  <div class="nav-item" onclick="nav('payments',this)">
-    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="14" height="9" rx="1"/><path d="M1 7h14"/></svg>
-    Payments
-  </div>
-  <div class="nav-section">Manage</div>
-  <div class="nav-item" onclick="nav('add-product',this)">
-    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v6M5 8h6"/></svg>
-    Add Product
-  </div>
-  <div class="sidebar-footer">
-    <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+  <nav class="sb-nav">
+    <div class="sb-section">Overview</div>
+    <div class="sb-item active" onclick="goView('dashboard',this)"><span class="ico">📊</span> Dashboard</div>
+    <div class="sb-item" onclick="goView('notifications',this)"><span class="ico">🔔</span> Notifications <span class="sb-badge green" id="notifBadge">4</span></div>
+
+    <div class="sb-section">Commerce</div>
+    <div class="sb-item" onclick="goView('orders',this)"><span class="ico">📦</span> Orders <span class="sb-badge" id="orderBadge">0</span></div>
+    <div class="sb-item" onclick="goView('payments',this)"><span class="ico">💳</span> Payments</div>
+    <div class="sb-item" onclick="goView('products',this)"><span class="ico">👗</span> Products</div>
+
+    <div class="sb-section">Insights</div>
+    <div class="sb-item" onclick="goView('analytics',this)"><span class="ico">📈</span> Analytics</div>
+    <div class="sb-item" onclick="goView('customers',this)"><span class="ico">👥</span> Customers</div>
+
+    <div class="sb-section">Settings</div>
+    <div class="sb-item" onclick="goView('settings',this)"><span class="ico">⚙️</span> Settings</div>
+  </nav>
+  <div class="sb-footer">
+    <p><span class="live-dot"></span>Live · Syncing</p>
+    <p style="margin-top:6px;font-size:10px;color:var(--ink3)">Lumière v2.0</p>
   </div>
 </aside>
 
-<!-- MAIN CONTENT -->
-<main class="main">
-
-  <!-- DASHBOARD -->
-  <div class="page active" id="page-dashboard">
-    <div class="page-header">
-      <div>
-        <div class="page-title">Dashboard <span>Overview</span></div>
-        <div style="font-size:12px;color:var(--ink3);margin-top:4px" id="dash-date"></div>
-      </div>
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="tb-title" id="topbarTitle"><em>Dashboard</em> Overview</div>
+    <div class="tb-right">
+      <span style="font-size:11px;color:var(--ink3)" id="liveTime"></span>
+      <button class="tb-btn" onclick="refreshData()">⟳ Refresh</button>
+      <button class="tb-btn primary" onclick="goView('products',document.querySelector('[onclick*=products]'))">+ Add Product</button>
     </div>
-    <div class="stats-grid">
-      <div class="stat-card green">
-        <div class="stat-label">Total Revenue</div>
-        <div class="stat-value" id="stat-revenue">₹0</div>
-        <div class="stat-sub"><span>↑ 18%</span> this month</div>
-      </div>
-      <div class="stat-card amber">
-        <div class="stat-label">Total Orders</div>
-        <div class="stat-value" id="stat-orders">0</div>
-        <div class="stat-sub"><span>↑ 5</span> today</div>
-      </div>
-      <div class="stat-card blue">
-        <div class="stat-label">Products</div>
-        <div class="stat-value" id="stat-products">0</div>
-        <div class="stat-sub">across all categories</div>
-      </div>
-      <div class="stat-card red">
-        <div class="stat-label">Pending Orders</div>
-        <div class="stat-value" id="stat-pending">0</div>
-        <div class="stat-sub">need attention</div>
-      </div>
-    </div>
+  </header>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-      <div class="card">
-        <div class="card-head">
-          <div><div class="card-title">Recent Orders</div><div class="card-sub">Last 5 orders</div></div>
-          <button class="btn btn-ghost btn-sm" onclick="nav('orders',document.querySelector('[onclick*=orders]'))">View all</button>
-        </div>
-        <table>
-          <thead><tr><th>Order</th><th>Customer</th><th>Amount</th><th>Status</th></tr></thead>
-          <tbody id="dash-orders"></tbody>
-        </table>
+  <main class="content">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div id="view-dashboard" class="view active">
+      <div class="stat-grid">
+        <div class="stat-card c1"><div class="sc-icon">💰</div><div class="sc-label">Total Revenue</div><div class="sc-val" id="stat-rev">₹0</div><div class="sc-sub"><span id="stat-rev-sub">0</span> orders today</div></div>
+        <div class="stat-card c2"><div class="sc-icon">📦</div><div class="sc-label">Total Orders</div><div class="sc-val" id="stat-ord">0</div><div class="sc-sub">Lifetime orders</div></div>
+        <div class="stat-card c3"><div class="sc-icon">✅</div><div class="sc-label">Paid Orders</div><div class="sc-val" id="stat-paid">0</div><div class="sc-sub"><span id="stat-paid-pct">0%</span> paid rate</div></div>
+        <div class="stat-card c4"><div class="sc-icon">🛒</div><div class="sc-label">Products</div><div class="sc-val" id="stat-prod">0</div><div class="sc-sub" id="stat-prod-sub">in catalogue</div></div>
       </div>
-      <div class="card">
-        <div class="card-head">
-          <div><div class="card-title">Top Products</div><div class="card-sub">By sales volume</div></div>
+
+      <div class="chart-row">
+        <div class="chart-card">
+          <div class="chart-title">Revenue by Day (Last 7 Days)</div>
+          <div class="bar-chart" id="revenueChart"></div>
         </div>
-        <table>
-          <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th></tr></thead>
-          <tbody id="dash-products"></tbody>
+        <div class="chart-card">
+          <div class="chart-title">Orders by Category</div>
+          <div class="donut-wrap">
+            <canvas class="donut" id="donutChart" width="90" height="90"></canvas>
+            <div class="donut-legend" id="donutLegend"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tbl-wrap">
+        <div class="tbl-hdr"><h3>Recent <em>Orders</em></h3><button class="tb-btn" onclick="goView('orders',document.querySelector('[onclick*=orders]'))">View All →</button></div>
+        <table id="recentOrdersTable">
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody id="recentOrdersTbody"></tbody>
         </table>
       </div>
     </div>
-  </div>
 
-  <!-- PRODUCTS -->
-  <div class="page" id="page-products">
-    <div class="page-header">
-      <div class="page-title">Products <span>Catalogue</span></div>
-      <button class="btn btn-primary" onclick="nav('add-product',document.querySelectorAll('.nav-item')[5])">+ Add Product</button>
+    <!-- ══ NOTIFICATIONS ══ -->
+    <div id="view-notifications" class="view">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <h2 style="font-family:var(--fd);font-size:22px;font-weight:300;color:var(--ink)">Notifications <em style="font-style:italic;color:var(--a1)">& Alerts</em></h2>
+        <button class="tb-btn" onclick="clearAllNotifs()">Clear All</button>
+      </div>
+      <div class="notif-list" id="notifList"></div>
     </div>
-    <div class="search-bar">
-      <input class="search-input" placeholder="Search products..." oninput="filterProducts(this.value)" id="prod-search">
-      <select class="filter-select" onchange="filterProductsCat(this.value)">
-        <option value="All">All categories</option>
-        <option>Dresses</option><option>Tops</option><option>Bottoms</option>
-        <option>Outerwear</option><option>Accessories</option><option>Footwear</option>
-      </select>
-    </div>
-    <div class="product-grid" id="products-grid"></div>
-  </div>
 
-  <!-- ORDERS -->
-  <div class="page" id="page-orders">
-    <div class="page-header">
-      <div class="page-title">Orders <span>Management</span></div>
+    <!-- ══ ORDERS ══ -->
+    <div id="view-orders" class="view">
+      <div class="tbl-wrap">
+        <div class="tbl-hdr">
+          <h3>All <em>Orders</em></h3>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <select class="form-select" style="width:140px" id="orderStatusFilter" onchange="renderOrders()">
+              <option value="All">All Statuses</option>
+              <option value="processing">Processing</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+            <input class="search-input" placeholder="Search orders…" id="orderSearch" oninput="renderOrders()">
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Address</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="ordersTbody"></tbody>
+        </table>
+      </div>
     </div>
-    <div class="search-bar">
-      <input class="search-input" placeholder="Search by order ID or customer..." oninput="filterOrders(this.value)">
-      <select class="filter-select" onchange="filterOrdersStatus(this.value)">
-        <option value="All">All statuses</option>
-        <option>Pending</option><option>Confirmed</option><option>Shipped</option>
-        <option>Delivered</option><option>Cancelled</option>
-      </select>
-    </div>
-    <div class="card">
-      <table>
-        <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
-        <tbody id="orders-table"></tbody>
-      </table>
-    </div>
-  </div>
 
-  <!-- PAYMENTS -->
-  <div class="page" id="page-payments">
-    <div class="page-header">
-      <div class="page-title">Payments <span>Transactions</span></div>
+    <!-- ══ PAYMENTS ══ -->
+    <div id="view-payments" class="view">
+      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px">
+        <div class="stat-card c2"><div class="sc-icon">✅</div><div class="sc-label">UPI Received</div><div class="sc-val" id="pay-upi">₹0</div><div class="sc-sub" id="pay-upi-cnt">0 transactions</div></div>
+        <div class="stat-card c3"><div class="sc-icon">🚪</div><div class="sc-label">COD Pending</div><div class="sc-val" id="pay-cod">₹0</div><div class="sc-sub" id="pay-cod-cnt">0 orders</div></div>
+        <div class="stat-card c4"><div class="sc-icon">💳</div><div class="sc-label">Card / Net</div><div class="sc-val" id="pay-card">₹0</div><div class="sc-sub" id="pay-card-cnt">0 transactions</div></div>
+      </div>
+      <div class="tbl-wrap">
+        <div class="tbl-hdr"><h3>Payment <em>Log</em></h3><input class="search-input" placeholder="Search…" id="paySearch" oninput="renderPayments()"></div>
+        <table>
+          <thead><tr><th>Ref #</th><th>Customer</th><th>Amount</th><th>Method</th><th>UPI / Note</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody id="payTbody"></tbody>
+        </table>
+      </div>
     </div>
-    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
-      <div class="stat-card green"><div class="stat-label">Total Collected</div><div class="stat-value" id="pay-total">₹0</div><div class="stat-sub">all time</div></div>
-      <div class="stat-card amber"><div class="stat-label">Pending</div><div class="stat-value" id="pay-pending">₹0</div><div class="stat-sub">COD + processing</div></div>
-      <div class="stat-card blue"><div class="stat-label">Transactions</div><div class="stat-value" id="pay-count">0</div><div class="stat-sub">total payments</div></div>
-    </div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">All Transactions</div></div>
-      <div id="payments-list"></div>
-    </div>
-  </div>
 
-  <!-- ADD PRODUCT -->
-  <div class="page" id="page-add-product">
-    <div class="page-header">
-      <div class="page-title" id="add-page-title">Add <span>Product</span></div>
-      <button class="btn btn-ghost" onclick="cancelEdit()">← Back</button>
-    </div>
-    <div class="form-section">
-      <div class="form-section-title">Product Details</div>
-      <div class="form-grid">
-        <div class="form-group"><label class="form-label">Product Name</label><input class="form-input" id="f-name" placeholder="e.g. Floral Wrap Dress"></div>
-        <div class="form-group"><label class="form-label">Category</label>
-          <select class="form-select" id="f-cat">
-            <option>Dresses</option><option>Tops</option><option>Bottoms</option>
-            <option>Outerwear</option><option>Accessories</option><option>Footwear</option>
+    <!-- ══ PRODUCTS ══ -->
+    <div id="view-products" class="view">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <input class="search-input" placeholder="Search products…" id="prodSearch" oninput="renderProducts()">
+          <select class="form-select" style="width:140px" id="prodCatFilter" onchange="renderProducts()">
+            <option value="All">All Categories</option>
+            <option>Dresses</option><option>Tops</option><option>Bottoms</option><option>Accessories</option>
           </select>
         </div>
-        <div class="form-group"><label class="form-label">Price (₹)</label><input class="form-input" id="f-price" type="number" placeholder="2499"></div>
-        <div class="form-group"><label class="form-label">Original Price (₹) — for sale</label><input class="form-input" id="f-was" type="number" placeholder="Leave blank if no sale"></div>
-        <div class="form-group"><label class="form-label">Emoji / Icon</label><input class="form-input" id="f-emoji" placeholder="👗" maxlength="4"></div>
-        <div class="form-group"><label class="form-label">Badge</label>
-          <select class="form-select" id="f-badge"><option value="">None</option><option>New</option><option>Sale</option><option>Trending</option><option>Limited</option></select>
+        <button class="tb-btn primary" onclick="openAddProduct()">+ Add Product</button>
+      </div>
+      <div class="prod-grid" id="prodGrid"></div>
+    </div>
+
+    <!-- ══ ANALYTICS ══ -->
+    <div id="view-analytics" class="view">
+      <div class="stat-grid">
+        <div class="stat-card c1"><div class="sc-icon">👁</div><div class="sc-label">Page Views (Est.)</div><div class="sc-val" id="an-views">0</div><div class="sc-sub">Last 30 days</div></div>
+        <div class="stat-card c2"><div class="sc-icon">🛍</div><div class="sc-label">Conversion Rate</div><div class="sc-val" id="an-cvr">0%</div><div class="sc-sub">Orders / Views</div></div>
+        <div class="stat-card c3"><div class="sc-icon">💵</div><div class="sc-label">Avg. Order Value</div><div class="sc-val" id="an-aov">₹0</div><div class="sc-sub">Per order</div></div>
+        <div class="stat-card c4"><div class="sc-icon">📦</div><div class="sc-label">Top Product</div><div class="sc-val" id="an-top" style="font-size:14px;line-height:1.4;margin-top:4px">—</div><div class="sc-sub"></div></div>
+      </div>
+      <div class="chart-row" style="margin-top:8px">
+        <div class="chart-card" style="grid-column:span 2">
+          <div class="chart-title">Monthly Revenue Trend</div>
+          <div class="bar-chart" style="height:120px" id="monthChart"></div>
         </div>
-        <div class="form-group full"><label class="form-label">Description</label><textarea class="form-textarea" id="f-desc" placeholder="Product description..."></textarea></div>
+      </div>
+      <div class="tbl-wrap">
+        <div class="tbl-hdr"><h3>Top <em>Selling</em> Products</h3></div>
+        <table>
+          <thead><tr><th>#</th><th>Product</th><th>Category</th><th>Price</th><th>Est. Sold</th><th>Revenue</th></tr></thead>
+          <tbody id="topProdTbody"></tbody>
+        </table>
       </div>
     </div>
-    <div style="display:flex;gap:12px">
-      <button class="btn btn-primary" onclick="saveProduct()" id="save-prod-btn">Save Product</button>
-      <button class="btn btn-ghost" onclick="cancelEdit()">Cancel</button>
+
+    <!-- ══ CUSTOMERS ══ -->
+    <div id="view-customers" class="view">
+      <div class="tbl-wrap">
+        <div class="tbl-hdr"><h3>Customer <em>Directory</em></h3><input class="search-input" placeholder="Search customers…" id="custSearch" oninput="renderCustomers()"></div>
+        <table>
+          <thead><tr><th>Name</th><th>Phone</th><th>City</th><th>Orders</th><th>Total Spent</th><th>Last Order</th></tr></thead>
+          <tbody id="custTbody"></tbody>
+        </table>
+      </div>
     </div>
-    <input type="hidden" id="f-edit-id" value="">
-  </div>
 
-</main>
+    <!-- ══ SETTINGS ══ -->
+    <div id="view-settings" class="view">
+      <div style="max-width:560px">
+        <div class="tbl-wrap" style="margin-bottom:20px">
+          <div class="tbl-hdr"><h3>Store <em>Settings</em></h3></div>
+          <div style="padding:22px">
+            <div class="form-field"><label class="form-label">Store Name</label><input class="form-input" id="set-name" value="LUMIÈRE"></div>
+            <div class="form-field"><label class="form-label">UPI ID</label><input class="form-input" id="set-upi" value="9482317790@ptyes"></div>
+            <div class="form-field"><label class="form-label">Free Shipping Threshold (₹)</label><input class="form-input" id="set-ship" type="number" value="999"></div>
+            <div class="form-field"><label class="form-label">Announcement Bar Text</label><input class="form-input" id="set-ann" value="✦ Free shipping on orders above ₹999 · New drops every Thursday ✦"></div>
+            <button class="btn primary" onclick="saveSettings()">Save Settings</button>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-hdr"><h3>Data <em>Management</em></h3></div>
+          <div style="padding:22px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+              <div><p style="font-size:13px;color:var(--ink)">Export All Orders (JSON)</p><p style="font-size:11px;color:var(--ink3);margin-top:2px">Download all order data</p></div>
+              <button class="tb-btn" onclick="exportOrders()">Export ↓</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+              <div><p style="font-size:13px;color:var(--ink)">Export Products (JSON)</p><p style="font-size:11px;color:var(--ink3);margin-top:2px">Download product catalogue</p></div>
+              <button class="tb-btn" onclick="exportProducts()">Export ↓</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0">
+              <div><p style="font-size:13px;color:var(--red)">Clear All Orders</p><p style="font-size:11px;color:var(--ink3);margin-top:2px">Permanently remove all order history</p></div>
+              <button class="tb-btn" style="border-color:var(--red);color:var(--red)" onclick="confirmClearOrders()">Clear ⚠</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<!-- ORDER DETAIL MODAL -->
-<div class="modal-overlay" id="order-modal" onclick="if(event.target===this)closeModal('order-modal')">
-  <div class="modal">
-    <div class="modal-head">
-      <div class="modal-title" id="modal-order-title">Order Details</div>
-      <button class="modal-close" onclick="closeModal('order-modal')">×</button>
+  </main>
+</div>
+
+<!-- ══ ADD / EDIT PRODUCT MODAL ══ -->
+<div class="modal-overlay" id="prodModal" onclick="closeProdModal(event)">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <h3 id="prodModalTitle">Add <em>Product</em></h3>
+      <button class="modal-close" onclick="document.getElementById('prodModal').classList.remove('open')">✕</button>
     </div>
     <div class="modal-body">
-      <div id="modal-order-body"></div>
-      <div style="margin-top:20px">
-        <div class="form-section-title" style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--a1);padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:14px">Update Status</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" onclick="updateOrderStatus(currentOrderId,'Confirmed')">Confirmed</button>
-          <button class="btn btn-ghost btn-sm" onclick="updateOrderStatus(currentOrderId,'Shipped')">Shipped</button>
-          <button class="btn btn-ghost btn-sm" onclick="updateOrderStatus(currentOrderId,'Delivered')">Delivered</button>
-          <button class="btn btn-danger btn-sm" onclick="updateOrderStatus(currentOrderId,'Cancelled')">Cancelled</button>
+      <div class="form-field">
+        <label class="form-label">Product Name</label>
+        <input class="form-input" id="pm-name" placeholder="e.g. Silk Wrap Dress">
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="pm-cat">
+            <option>Dresses</option><option>Tops</option><option>Bottoms</option><option>Accessories</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Badge</label>
+          <select class="form-select" id="pm-badge">
+            <option value="">None</option><option>New</option><option>Sale</option>
+          </select>
         </div>
       </div>
-      <div style="margin-top:20px">
-        <div class="form-section-title" style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--a1);padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:14px">Order Timeline</div>
-        <div class="timeline" id="modal-timeline" style="padding:0"></div>
+      <div class="form-row">
+        <div class="form-field">
+          <label class="form-label">Price (₹)</label>
+          <input class="form-input" id="pm-price" type="number" placeholder="1999">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Original Price (₹) — optional</label>
+          <input class="form-input" id="pm-was" type="number" placeholder="2999">
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" id="pm-desc" placeholder="Short product description…"></textarea>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Emoji / Icon</label>
+        <div class="emoji-pick" id="emojiPick">
+          <div class="emoji-opt sel" data-e="👗" onclick="pickEmoji(this)">👗</div>
+          <div class="emoji-opt" data-e="👚" onclick="pickEmoji(this)">👚</div>
+          <div class="emoji-opt" data-e="👖" onclick="pickEmoji(this)">👖</div>
+          <div class="emoji-opt" data-e="👜" onclick="pickEmoji(this)">👜</div>
+          <div class="emoji-opt" data-e="🥻" onclick="pickEmoji(this)">🥻</div>
+          <div class="emoji-opt" data-e="🌸" onclick="pickEmoji(this)">🌸</div>
+          <div class="emoji-opt" data-e="🌿" onclick="pickEmoji(this)">🌿</div>
+          <div class="emoji-opt" data-e="💛" onclick="pickEmoji(this)">💛</div>
+          <div class="emoji-opt" data-e="✨" onclick="pickEmoji(this)">✨</div>
+          <div class="emoji-opt" data-e="🌙" onclick="pickEmoji(this)">🌙</div>
+          <div class="emoji-opt" data-e="🌼" onclick="pickEmoji(this)">🌼</div>
+          <div class="emoji-opt" data-e="💜" onclick="pickEmoji(this)">💜</div>
+          <div class="emoji-opt" data-e="💎" onclick="pickEmoji(this)">💎</div>
+          <div class="emoji-opt" data-e="🎀" onclick="pickEmoji(this)">🎀</div>
+          <div class="emoji-opt" data-e="👡" onclick="pickEmoji(this)">👡</div>
+          <div class="emoji-opt" data-e="🧥" onclick="pickEmoji(this)">🧥</div>
+        </div>
       </div>
     </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="closeModal('order-modal')">Close</button>
+    <div class="modal-footer">
+      <button class="btn ghost" onclick="document.getElementById('prodModal').classList.remove('open')">Cancel</button>
+      <button class="btn primary" onclick="saveProd()">Save Product</button>
     </div>
   </div>
 </div>
 
-<!-- PRODUCT DELETE CONFIRM -->
-<div class="modal-overlay" id="del-modal" onclick="if(event.target===this)closeModal('del-modal')">
-  <div class="modal" style="max-width:380px">
-    <div class="modal-head"><div class="modal-title">Delete Product</div><button class="modal-close" onclick="closeModal('del-modal')">×</button></div>
-    <div class="modal-body"><p style="color:var(--ink2);font-size:14px">Are you sure you want to delete <strong id="del-name" style="color:var(--ink)"></strong>? This cannot be undone.</p></div>
-    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal('del-modal')">Cancel</button><button class="btn btn-danger" onclick="confirmDelete()">Delete</button></div>
+<!-- ══ ORDER DETAIL MODAL ══ -->
+<div class="modal-overlay" id="orderModal" onclick="closeOrderModal(event)">
+  <div class="modal-box" style="max-width:640px">
+    <div class="modal-hdr">
+      <h3 id="om-id">Order <em>#—</em></h3>
+      <button class="modal-close" onclick="document.getElementById('orderModal').classList.remove('open')">✕</button>
+    </div>
+    <div style="padding:22px" id="orderModalBody"></div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- ══ CONFIRM DIALOG ══ -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <h4 id="confirmTitle">Are you sure?</h4>
+    <p id="confirmMsg">This action cannot be undone.</p>
+    <div class="confirm-actions">
+      <button class="btn ghost" onclick="document.getElementById('confirmOverlay').classList.remove('open')">Cancel</button>
+      <button class="btn danger" id="confirmOkBtn">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="admin-toast" id="adminToast"></div>
 
 <script>
-// ── DATA ──────────────────────────────────────────────
-const CREDS={user:'admin',pass:'admin123'};
-let currentOrderId=null,deleteTargetId=null,editProductId=null;
+// ── STORAGE KEYS (same as main site) ──
+const CK = 'lumiere_cart_v3';       // cart (for live cart peek)
+const OK = 'lumiere_orders_v1';     // orders saved by admin panel
+const PK = 'lumiere_products_v1';   // products — admin edits these, main site reads
+const NK = 'lumiere_notifs_v1';
 
-let PRODUCTS=JSON.parse(localStorage.getItem('lum_products')||'null')||[
-  {id:1,name:'Floral Wrap Dress',cat:'Dresses',price:3299,was:4500,emoji:'🌸',badge:'Sale',desc:'Elegant floral wrap dress perfect for summer.',stock:12},
-  {id:2,name:'Silk Cami Top',cat:'Tops',price:1899,emoji:'✨',badge:'New',desc:'Luxurious silk cami in multiple shades.',stock:8},
-  {id:3,name:'Wide Leg Trousers',cat:'Bottoms',price:2499,emoji:'👖',badge:'',desc:'High-waisted wide leg trousers.',stock:15},
-  {id:4,name:'Linen Blazer',cat:'Outerwear',price:4299,emoji:'🧥',badge:'Trending',desc:'Relaxed fit linen blazer.',stock:6},
-  {id:5,name:'Pearl Necklace',cat:'Accessories',price:899,emoji:'📿',badge:'',desc:'Freshwater pearl necklace.',stock:20},
-  {id:6,name:'Block Heel Mules',cat:'Footwear',price:2799,emoji:'👡',badge:'',desc:'Classic block heel mules.',stock:9},
-  {id:7,name:'Ruffle Mini Dress',cat:'Dresses',price:2199,emoji:'👗',badge:'New',desc:'Playful ruffle mini dress.',stock:11},
-  {id:8,name:'Striped Shirt',cat:'Tops',price:1499,emoji:'👚',badge:'',desc:'Classic breton stripe shirt.',stock:18},
-  {id:9,name:'Pleated Midi Skirt',cat:'Bottoms',price:1899,emoji:'🩱',badge:'Trending',desc:'Flowy pleated midi skirt.',stock:14},
-  {id:10,name:'Trench Coat',cat:'Outerwear',price:6999,emoji:'🧣',badge:'Limited',desc:'Classic belted trench coat.',stock:4},
-  {id:11,name:'Silk Scarf',cat:'Accessories',price:1299,emoji:'🎀',badge:'',desc:'Hand-painted silk scarf.',stock:25},
-  {id:12,name:'Strappy Sandals',cat:'Footwear',price:2199,emoji:'👠',badge:'Sale',desc:'Minimal strappy sandals.',stock:7},
+// ── DEFAULT PRODUCTS (matches main site) ──
+const DEFAULT_PRODS = [
+  {id:1,name:'Silk Wrap Dress',cat:'Dresses',emoji:'👗',price:2499,was:3299,badge:'New',desc:'Effortlessly elegant wrap dress in premium silk blend. A wardrobe essential that takes you from brunch to evening.'},
+  {id:2,name:'Linen Co-ord Set',cat:'Tops',emoji:'👚',price:1899,was:null,badge:null,desc:"Breathable linen set in a relaxed silhouette. Perfect for India's warm weather with a chic twist."},
+  {id:3,name:'High-Waist Trousers',cat:'Bottoms',emoji:'👖',price:1599,was:2199,badge:'Sale',desc:'Tailored high-waist trousers with wide-leg cut. Pairs beautifully with tucked-in blouses or crop tops.'},
+  {id:4,name:'Floral Midi Skirt',cat:'Bottoms',emoji:'🌸',price:1299,was:null,badge:'New',desc:'A flowing midi skirt with an all-over floral print. Light, feminine, and utterly romantic.'},
+  {id:5,name:'Structured Tote Bag',cat:'Accessories',emoji:'👜',price:2199,was:2999,badge:'Sale',desc:'Your go-to everyday tote. Spacious, structured, and styled with gold hardware that makes a statement.'},
+  {id:6,name:'Off-Shoulder Blouse',cat:'Tops',emoji:'🌿',price:999,was:null,badge:null,desc:'A breezy off-shoulder blouse that adds instant elegance to any outfit. Wear it dressed up or down.'},
+  {id:7,name:'Maxi Boho Dress',cat:'Dresses',emoji:'🥻',price:2799,was:3499,badge:'New',desc:'Flowing boho maxi dress with delicate embroidery. Made for beach getaways and summer festivals alike.'},
+  {id:8,name:'Gold Hoop Earrings',cat:'Accessories',emoji:'💛',price:699,was:null,badge:null,desc:'Classic oversized hoops that elevate any outfit. Hypoallergenic and lightweight for all-day wear.'},
+  {id:9,name:'Ribbed Bodysuit',cat:'Tops',emoji:'✨',price:1199,was:1599,badge:'Sale',desc:'A smooth ribbed bodysuit that stays tucked and sleek no matter what. Pairs with everything.'},
+  {id:10,name:'Pleated Wide Pants',cat:'Bottoms',emoji:'🌙',price:1799,was:null,badge:'New',desc:'Luxe pleated wide-leg trousers in a flowy fabric. The most effortless elegance for any occasion.'},
+  {id:11,name:'Crochet Mini Dress',cat:'Dresses',emoji:'🌼',price:2299,was:2899,badge:'Sale',desc:'Handcrafted-feel crochet mini dress that radiates summer energy. Layer over a slip for versatile styling.'},
+  {id:12,name:'Beaded Clutch',cat:'Accessories',emoji:'💜',price:1499,was:null,badge:'New',desc:'An evening clutch with intricate beadwork. Small but impactful — the perfect finishing touch.'},
 ];
 
-let ORDERS=JSON.parse(localStorage.getItem('lum_orders')||'null')||[
-  {id:'ORD-001',customer:'Priya Sharma',email:'priya@example.com',phone:'9876543210',items:[{name:'Floral Wrap Dress',qty:1,price:3299},{name:'Pearl Necklace',qty:1,price:899}],total:4198,payment:'UPI',payId:'UPI2024011201',status:'Delivered',date:'2024-01-12',address:'12 MG Road, Bangalore 560001',timeline:['Ordered','Confirmed','Shipped','Delivered']},
-  {id:'ORD-002',customer:'Anjali Mehta',email:'anjali@example.com',phone:'9123456789',items:[{name:'Silk Cami Top',qty:2,price:3798},{name:'Wide Leg Trousers',qty:1,price:2499}],total:6297,payment:'Card',payId:'CARD20240113XY',status:'Shipped',date:'2024-01-13',address:'45 Park Street, Mumbai 400001',timeline:['Ordered','Confirmed','Shipped']},
-  {id:'ORD-003',customer:'Kavya Nair',email:'kavya@example.com',phone:'9988776655',items:[{name:'Linen Blazer',qty:1,price:4299}],total:4299,payment:'UPI',payId:'UPI2024011401',status:'Confirmed',date:'2024-01-14',address:'7 Anna Salai, Chennai 600002',timeline:['Ordered','Confirmed']},
-  {id:'ORD-004',customer:'Meera Iyer',email:'meera@example.com',phone:'8877665544',items:[{name:'Ruffle Mini Dress',qty:1,price:2199},{name:'Block Heel Mules',qty:1,price:2799}],total:4998,payment:'COD',payId:'COD-PENDING',status:'Pending',date:'2024-01-14',address:'89 Jubilee Hills, Hyderabad 500033',timeline:['Ordered']},
-  {id:'ORD-005',customer:'Sana Khan',email:'sana@example.com',phone:'7766554433',items:[{name:'Trench Coat',qty:1,price:6999}],total:6999,payment:'Card',payId:'CARD20240115AB',status:'Delivered',date:'2024-01-15',address:'3 Linking Road, Mumbai 400050',timeline:['Ordered','Confirmed','Shipped','Delivered']},
-  {id:'ORD-006',customer:'Divya Patel',email:'divya@example.com',phone:'9900112233',items:[{name:'Silk Scarf',qty:2,price:2598},{name:'Striped Shirt',qty:1,price:1499}],total:4097,payment:'UPI',payId:'UPI2024011601',status:'Shipped',date:'2024-01-16',address:'22 Civil Lines, Delhi 110001',timeline:['Ordered','Confirmed','Shipped']},
-  {id:'ORD-007',customer:'Ria Thomas',email:'ria@example.com',phone:'8800990011',items:[{name:'Pleated Midi Skirt',qty:1,price:1899},{name:'Strappy Sandals',qty:1,price:2199}],total:4098,payment:'COD',payId:'COD-PENDING',status:'Pending',date:'2024-01-17',address:'56 MG Road, Kochi 682016',timeline:['Ordered']},
-  {id:'ORD-008',customer:'Pooja Gupta',email:'pooja@example.com',phone:'9111222333',items:[{name:'Pearl Necklace',qty:1,price:899},{name:'Silk Cami Top',qty:1,price:1899}],total:2798,payment:'Card',payId:'CARD20240118CD',status:'Cancelled',date:'2024-01-18',address:'10 Connaught Place, Delhi 110001',timeline:['Ordered','Cancelled']},
+// ── SAMPLE DEMO ORDERS ──
+const DEMO_ORDERS = [
+  {id:'LUM-00001',name:'Priya Sharma',phone:'9876543210',addr:'12 MG Road, Indiranagar',city:'Bengaluru',pin:'560038',items:[{name:'Silk Wrap Dress',emoji:'👗',price:2499,qty:1,size:'M'},{name:'Gold Hoop Earrings',emoji:'💛',price:699,qty:1,size:'—'}],total:3198,payment:'UPI — PhonePe / GPay / Paytm',status:'delivered',date:'2025-06-01'},
+  {id:'LUM-00002',name:'Anjali Mehta',phone:'9123456780',addr:'45 Linking Road, Bandra',city:'Mumbai',pin:'400050',items:[{name:'Linen Co-ord Set',emoji:'👚',price:1899,qty:1,size:'S'}],total:1899,payment:'Cash on Delivery',status:'processing',date:'2025-06-03'},
+  {id:'LUM-00003',name:'Kavya Nair',phone:'8765432109',addr:'22 Anna Nagar, Phase 1',city:'Chennai',pin:'600040',items:[{name:'Floral Midi Skirt',emoji:'🌸',price:1299,qty:2,size:'M'}],total:2598,payment:'Credit / Debit Card',status:'processing',date:'2025-06-05'},
+  {id:'LUM-00004',name:'Sneha Kulkarni',phone:'7890123456',addr:'77 FC Road, Shivajinagar',city:'Pune',pin:'411005',items:[{name:'Maxi Boho Dress',emoji:'🥻',price:2799,qty:1,size:'L'}],total:2799,payment:'UPI — PhonePe / GPay / Paytm',status:'delivered',date:'2025-06-06'},
+  {id:'LUM-00005',name:'Riya Kapoor',phone:'9988776655',addr:'8 Connaught Place',city:'New Delhi',pin:'110001',items:[{name:'High-Waist Trousers',emoji:'👖',price:1599,qty:1,size:'S'},{name:'Ribbed Bodysuit',emoji:'✨',price:1199,qty:1,size:'S'}],total:2798,payment:'Cash on Delivery',status:'cancelled',date:'2025-06-07'},
 ];
 
-// ── UTILS ──────────────────────────────────────────────
-function save(){localStorage.setItem('lum_products',JSON.stringify(PRODUCTS));localStorage.setItem('lum_orders',JSON.stringify(ORDERS));}
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
-function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-function statusBadge(s){const m={Pending:'badge-warning',Confirmed:'badge-info',Shipped:'badge-info',Delivered:'badge-success',Cancelled:'badge-danger'};return`<span class="badge ${m[s]||'badge-gray'}">${s}</span>`;}
-function fmtDate(d){return new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});}
-function nextId(arr){return arr.length?Math.max(...arr.map(x=>x.id))+1:1;}
+const DEMO_NOTIFS = [
+  {id:1,type:'order',ico:'📦',msg:'New order LUM-00003 from Kavya Nair — ₹2,598',time:'2 min ago',read:false},
+  {id:2,type:'payment',ico:'💚',msg:'UPI payment confirmed for LUM-00004 — ₹2,799',time:'14 min ago',read:false},
+  {id:3,type:'low-stock',ico:'⚠️',msg:'Beaded Clutch (ID 12) has low stock — consider restocking',time:'1 hr ago',read:false},
+  {id:4,type:'info',ico:'✉️',msg:'3 new newsletter subscribers today',time:'3 hrs ago',read:false},
+  {id:5,type:'order',ico:'📦',msg:'New order LUM-00002 from Anjali Mehta — ₹1,899',time:'Yesterday',read:true},
+];
 
-// ── AUTH ──────────────────────────────────────────────
-function doLogin(){
-  const u=document.getElementById('l-user').value.trim();
-  const p=document.getElementById('l-pass').value;
-  if(u===CREDS.user&&p===CREDS.pass){
-    document.getElementById('login-screen').style.display='none';
-    initDashboard();
-  } else {
-    document.getElementById('login-err').style.display='block';
-  }
+// ── STATE ──
+let products = [], orders = [], notifications = [];
+let editingProdId = null;
+let currentView = 'dashboard';
+
+function load() {
+  try { products = JSON.parse(localStorage.getItem(PK)) || DEFAULT_PRODS.map(p=>({...p})); } catch(e) { products = DEFAULT_PRODS.map(p=>({...p})); }
+  try { orders = JSON.parse(localStorage.getItem(OK)) || DEMO_ORDERS.map(o=>({...o})); } catch(e) { orders = DEMO_ORDERS.map(o=>({...o})); }
+  try { notifications = JSON.parse(localStorage.getItem(NK)) || DEMO_NOTIFS.map(n=>({...n})); } catch(e) { notifications = DEMO_NOTIFS.map(n=>({...n})); }
+  // Sync: if main site has new cart checkout (orders stored in site's own key), we can't intercept — but we manage orders here
 }
-function doLogout(){document.getElementById('login-screen').style.display='flex';document.getElementById('l-pass').value='';}
-
-// ── NAV ──────────────────────────────────────────────
-function nav(page,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+page).classList.add('active');
-  if(el)el.classList.add('active');
-  if(page==='dashboard')renderDashboard();
-  if(page==='products')renderProducts();
-  if(page==='orders')renderOrders();
-  if(page==='payments')renderPayments();
-  if(page==='add-product'){document.getElementById('add-page-title').innerHTML='Add <span>Product</span>';document.getElementById('save-prod-btn').textContent='Save Product';resetForm();}
+function save() {
+  try { localStorage.setItem(PK, JSON.stringify(products)); } catch(e){}
+  try { localStorage.setItem(OK, JSON.stringify(orders)); } catch(e){}
+  try { localStorage.setItem(NK, JSON.stringify(notifications)); } catch(e){}
+  // Also write products back to a key the main site could read
+  try { localStorage.setItem('lumiere_products_v1', JSON.stringify(products)); } catch(e){}
 }
 
-// ── DASHBOARD ──────────────────────────────────────────
-function initDashboard(){
-  document.getElementById('dash-date').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  renderDashboard();
-}
-function renderDashboard(){
-  const revenue=ORDERS.filter(o=>o.status!=='Cancelled').reduce((s,o)=>s+o.total,0);
-  const pending=ORDERS.filter(o=>o.status==='Pending').length;
-  document.getElementById('stat-revenue').textContent='₹'+revenue.toLocaleString('en-IN');
-  document.getElementById('stat-orders').textContent=ORDERS.length;
-  document.getElementById('stat-products').textContent=PRODUCTS.length;
-  document.getElementById('stat-pending').textContent=pending;
-  document.getElementById('nb-orders').textContent=pending;
-  document.getElementById('nb-products').textContent=PRODUCTS.length;
-
-  const recent=ORDERS.slice(-5).reverse();
-  document.getElementById('dash-orders').innerHTML=recent.map(o=>`
-    <tr onclick="viewOrder('${o.id}')" style="cursor:pointer">
-      <td style="color:var(--a3);font-family:monospace;font-size:12px">${o.id}</td>
-      <td>${o.customer}</td>
-      <td style="font-family:var(--fd);font-size:16px">₹${o.total.toLocaleString('en-IN')}</td>
-      <td>${statusBadge(o.status)}</td>
-    </tr>`).join('');
-
-  document.getElementById('dash-products').innerHTML=PRODUCTS.slice(0,5).map(p=>`
-    <tr>
-      <td>${p.emoji} ${p.name}</td>
-      <td><span style="font-size:11px;color:var(--ink3)">${p.cat}</span></td>
-      <td style="font-family:var(--fd);font-size:16px">₹${p.price.toLocaleString('en-IN')}</td>
-      <td><span style="color:${p.stock<5?'var(--danger)':'var(--success)'}">×${p.stock}</span></td>
-    </tr>`).join('');
+// ── NAVIGATION ──
+function goView(v, el) {
+  document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  currentView = v;
+  const titles = {dashboard:'<em>Dashboard</em> Overview',notifications:'Notifications <em>& Alerts</em>',orders:'<em>Orders</em> Management',payments:'<em>Payment</em> Log',products:'<em>Products</em> Catalogue',analytics:'<em>Analytics</em> & Insights',customers:'<em>Customer</em> Directory',settings:'Store <em>Settings</em>'};
+  document.getElementById('topbarTitle').innerHTML = titles[v] || v;
+  if(v==='dashboard') renderDashboard();
+  else if(v==='orders') renderOrders();
+  else if(v==='payments') renderPayments();
+  else if(v==='products') renderProducts();
+  else if(v==='analytics') renderAnalytics();
+  else if(v==='customers') renderCustomers();
+  else if(v==='notifications') renderNotifs();
 }
 
-// ── PRODUCTS ──────────────────────────────────────────
-let prodFilter='',prodCat='All';
-function renderProducts(list){
-  const arr=list||(prodCat==='All'?PRODUCTS:PRODUCTS.filter(p=>p.cat===prodCat)).filter(p=>p.name.toLowerCase().includes(prodFilter.toLowerCase()));
-  const g=document.getElementById('products-grid');
-  if(!arr.length){g.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">👗</div><div class="empty-text">No products found</div></div>';return;}
-  g.innerHTML=arr.map(p=>`
-    <div class="product-card">
-      <div class="product-emoji-box">
-        ${p.emoji}
-        ${p.badge?`<span class="product-badge">${p.badge}</span>`:''}
+// ── LIVE CLOCK ──
+function tick() {
+  const d = new Date();
+  document.getElementById('liveTime').textContent = d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(tick, 1000); tick();
+
+// ── DASHBOARD ──
+function renderDashboard() {
+  const rev = orders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+o.total,0);
+  const paid = orders.filter(o=>o.payment.includes('UPI')||o.payment.includes('Card'));
+  document.getElementById('stat-rev').textContent = '₹'+rev.toLocaleString('en-IN');
+  document.getElementById('stat-rev-sub').textContent = orders.length;
+  document.getElementById('stat-ord').textContent = orders.length;
+  document.getElementById('stat-paid').textContent = paid.length;
+  document.getElementById('stat-paid-pct').textContent = orders.length ? Math.round(paid.length/orders.length*100)+'%' : '0%';
+  document.getElementById('stat-prod').textContent = products.length;
+  document.getElementById('stat-prod-sub').textContent = products.filter(p=>p.badge==='Sale').length+' on sale';
+  renderRevenueChart();
+  renderDonut();
+  // Recent orders
+  const recent = [...orders].reverse().slice(0,5);
+  document.getElementById('recentOrdersTbody').innerHTML = recent.map(o=>orderRow(o,true)).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--ink3);padding:30px">No orders yet</td></tr>';
+}
+
+function orderRow(o, compact=false) {
+  const pm = o.payment.includes('UPI')?'paid':o.payment.includes('Cash')?'cod':'paid';
+  const pmLabel = o.payment.includes('UPI')?'UPI':o.payment.includes('Cash')?'COD':'Card';
+  return `<tr>
+    <td style="color:var(--a1);font-family:var(--fd)">${o.id}</td>
+    <td>${o.name}<br><span style="font-size:10px;color:var(--ink3)">${o.phone}</span></td>
+    ${compact?'':'<td style="font-size:11px;color:var(--ink3);max-width:160px">'+(o.city+', '+o.pin)+'</td>'}
+    <td>${o.items.map(i=>i.emoji).join(' ')}<br><span style="font-size:10px;color:var(--ink3)">${o.items.length} item${o.items.length>1?'s':''}</span></td>
+    <td style="color:var(--ink);font-weight:500">₹${o.total.toLocaleString('en-IN')}</td>
+    <td><span class="badge ${pm}">${pmLabel}</span></td>
+    <td>
+      <select class="status-select" onchange="updateStatus('${o.id}',this.value)">
+        <option value="processing" ${o.status==='processing'?'selected':''}>Processing</option>
+        <option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option>
+        <option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option>
+      </select>
+    </td>
+    <td style="font-size:11px;color:var(--ink3)">${o.date}</td>
+    ${compact?'':'<td><button class="act-btn" onclick="viewOrder(\''+o.id+'\')">View</button></td>'}
+  </tr>`;
+}
+
+function renderOrders() {
+  const sf = document.getElementById('orderStatusFilter').value;
+  const q = (document.getElementById('orderSearch').value||'').toLowerCase();
+  let list = [...orders].reverse();
+  if(sf!=='All') list=list.filter(o=>o.status===sf);
+  if(q) list=list.filter(o=>o.name.toLowerCase().includes(q)||o.id.toLowerCase().includes(q)||o.city.toLowerCase().includes(q));
+  document.getElementById('orderBadge').textContent = orders.filter(o=>o.status==='processing').length;
+  document.getElementById('ordersTbody').innerHTML = list.map(o=>orderRow(o,false)).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--ink3);padding:30px">No orders found</td></tr>';
+}
+
+function updateStatus(id, status) {
+  const o = orders.find(x=>x.id===id);
+  if(o){ o.status=status; save(); showToast('Status updated → '+status,'success'); renderDashboard(); }
+}
+
+function viewOrder(id) {
+  const o = orders.find(x=>x.id===id);
+  if(!o) return;
+  const pm = o.payment.includes('UPI')?'paid':o.payment.includes('Cash')?'cod':'paid';
+  const pmLabel = o.payment.includes('UPI')?'UPI':o.payment.includes('Cash')?'COD':'Card';
+  document.getElementById('om-id').innerHTML = 'Order <em>#'+o.id+'</em>';
+  const tl = [
+    {done:true,active:false,ico:'✓',label:'Order Placed',time:o.date},
+    {done:o.status!=='cancelled',active:o.status==='processing',ico:'⟳',label:'Processing',time:''},
+    {done:o.status==='delivered',active:false,ico:'🚀',label:'Shipped',time:''},
+    {done:o.status==='delivered',active:false,ico:'✓',label:'Delivered',time:''},
+  ];
+  document.getElementById('orderModalBody').innerHTML = `
+    <div class="od-body" style="grid-template-columns:1fr 1fr;gap:20px;display:grid">
+      <div class="od-section">
+        <h4>Customer Info</h4>
+        <div class="od-row"><span>Name</span><strong>${o.name}</strong></div>
+        <div class="od-row"><span>Phone</span><strong>${o.phone}</strong></div>
+        <div class="od-row"><span>City</span><strong>${o.city}</strong></div>
+        <div class="od-row"><span>PIN</span><strong>${o.pin}</strong></div>
+        <div class="od-row"><span>Address</span><strong style="max-width:180px;text-align:right">${o.addr}</strong></div>
       </div>
-      <div class="product-info">
-        <div class="product-name">${p.name}</div>
-        <div class="product-cat">${p.cat} · Stock: ${p.stock}</div>
-        <div class="product-price">₹${p.price.toLocaleString('en-IN')}${p.was?` <span style="font-size:13px;color:var(--ink3);text-decoration:line-through">₹${p.was.toLocaleString('en-IN')}</span>`:''}</div>
-        <div class="product-actions">
-          <button class="btn btn-ghost btn-sm" onclick="editProduct(${p.id})">Edit</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id},'${p.name}')">Delete</button>
+      <div class="od-section">
+        <h4>Payment Info</h4>
+        <div class="od-row"><span>Method</span><span class="badge ${pm}">${pmLabel}</span></div>
+        <div class="od-row"><span>Total</span><strong>₹${o.total.toLocaleString('en-IN')}</strong></div>
+        <div class="od-row"><span>Status</span><strong>${o.status}</strong></div>
+        <div class="od-row"><span>Date</span><strong>${o.date}</strong></div>
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <h4 style="font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px">Items Ordered</h4>
+      ${o.items.map(i=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px">
+        <span>${i.emoji} ${i.name} × ${i.qty} <span style="font-size:10px;color:var(--ink3)">(${i.size})</span></span>
+        <span style="color:var(--ink)">₹${(i.price*i.qty).toLocaleString('en-IN')}</span>
+      </div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding:12px 0;font-family:var(--fd);font-size:17px;color:var(--ink)"><span>Total</span><span>₹${o.total.toLocaleString('en-IN')}</span></div>
+    </div>
+    <div style="margin-top:16px">
+      <h4 style="font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px">Order Timeline</h4>
+      ${tl.map(t=>`<div class="tl-item"><div class="tl-dot ${t.done?'done':''} ${t.active?'active':''}">${t.ico}</div><div class="tl-info"><p>${t.label}</p><span>${t.time}</span></div></div>`).join('')}
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <select class="form-select" id="om-status" style="flex:1">
+        <option value="processing" ${o.status==='processing'?'selected':''}>Processing</option>
+        <option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option>
+        <option value="cancelled" ${o.status==='cancelled'?'selected':''}>Cancelled</option>
+      </select>
+      <button class="btn primary" onclick="updateStatusFromModal('${o.id}')">Update Status</button>
+      <button class="btn danger" onclick="confirmDeleteOrder('${o.id}')">Delete</button>
+    </div>`;
+  document.getElementById('orderModal').classList.add('open');
+}
+
+function updateStatusFromModal(id) {
+  const s = document.getElementById('om-status').value;
+  updateStatus(id, s);
+  renderOrders();
+}
+function closeOrderModal(e){ if(e.target.id==='orderModal') document.getElementById('orderModal').classList.remove('open'); }
+
+// ── PAYMENTS ──
+function renderPayments() {
+  const upi = orders.filter(o=>o.payment.includes('UPI'));
+  const cod = orders.filter(o=>o.payment.includes('Cash'));
+  const card = orders.filter(o=>o.payment.includes('Card'));
+  document.getElementById('pay-upi').textContent='₹'+upi.reduce((s,o)=>s+o.total,0).toLocaleString('en-IN');
+  document.getElementById('pay-upi-cnt').textContent=upi.length+' transactions';
+  document.getElementById('pay-cod').textContent='₹'+cod.reduce((s,o)=>s+o.total,0).toLocaleString('en-IN');
+  document.getElementById('pay-cod-cnt').textContent=cod.length+' orders';
+  document.getElementById('pay-card').textContent='₹'+card.reduce((s,o)=>s+o.total,0).toLocaleString('en-IN');
+  document.getElementById('pay-card-cnt').textContent=card.length+' transactions';
+  const q=(document.getElementById('paySearch').value||'').toLowerCase();
+  const list=orders.filter(o=>!q||o.name.toLowerCase().includes(q)||o.id.toLowerCase().includes(q));
+  document.getElementById('payTbody').innerHTML=list.reverse().map(o=>{
+    const pm=o.payment.includes('UPI')?'paid':o.payment.includes('Cash')?'cod':'paid';
+    const pmLabel=o.payment.includes('UPI')?'UPI':o.payment.includes('Cash')?'COD':'Card';
+    const upiNote=o.payment.includes('UPI')?'9482317790@ptyes':o.payment.includes('Cash')?'On delivery':'Encrypted';
+    return`<tr>
+      <td style="color:var(--a1);font-family:var(--fd)">${o.id}</td>
+      <td>${o.name}</td>
+      <td style="color:var(--ink);font-weight:500">₹${o.total.toLocaleString('en-IN')}</td>
+      <td><span class="badge ${pm}">${pmLabel}</span></td>
+      <td style="font-size:11px;color:var(--ink3)">${upiNote}</td>
+      <td><span class="badge ${o.status==='delivered'?'delivered':o.status==='cancelled'?'cancelled':'processing'}">${o.status}</span></td>
+      <td style="font-size:11px;color:var(--ink3)">${o.date}</td>
+      <td><button class="act-btn" onclick="viewOrder('${o.id}')">Details</button></td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="8" style="text-align:center;color:var(--ink3);padding:30px">No payment records</td></tr>';
+}
+
+// ── PRODUCTS ──
+function renderProducts() {
+  const q=(document.getElementById('prodSearch').value||'').toLowerCase();
+  const cf=document.getElementById('prodCatFilter').value;
+  let list=products;
+  if(cf!=='All') list=list.filter(p=>p.cat===cf);
+  if(q) list=list.filter(p=>p.name.toLowerCase().includes(q));
+  document.getElementById('prodGrid').innerHTML=list.map(p=>`
+    <div class="prod-card">
+      <div class="pc-img">
+        <span>${p.emoji}</span>
+        ${p.badge?`<span class="pc-badge badge ${p.badge.toLowerCase()}">${p.badge}</span>`:''}
+      </div>
+      <div class="pc-body">
+        <div class="pc-name">${p.name}</div>
+        <div class="pc-cat">${p.cat}</div>
+        <div class="pc-price">₹${p.price.toLocaleString('en-IN')}${p.was?`<span class="pc-was">₹${p.was.toLocaleString('en-IN')}</span>`:''}</div>
+        <div class="pc-actions">
+          <button onclick="editProd(${p.id})">✏️ Edit</button>
+          <button class="del" onclick="confirmDeleteProd(${p.id})">🗑 Delete</button>
         </div>
       </div>
-    </div>`).join('');
+    </div>`).join('')||`<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--ink3)"><span style="font-size:40px">👗</span><p style="margin-top:12px">No products found</p></div>`;
 }
-function filterProducts(q){prodFilter=q;renderProducts();}
-function filterProductsCat(c){prodCat=c;renderProducts();}
 
-// ── ADD / EDIT PRODUCT ──────────────────────────────
-function resetForm(){['f-name','f-price','f-was','f-emoji','f-desc'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-cat').value='Dresses';document.getElementById('f-badge').value='';document.getElementById('f-edit-id').value='';editProductId=null;}
-function saveProduct(){
-  const name=document.getElementById('f-name').value.trim();
-  const price=parseInt(document.getElementById('f-price').value);
-  const was=parseInt(document.getElementById('f-was').value)||null;
-  const emoji=document.getElementById('f-emoji').value.trim()||'👗';
-  const cat=document.getElementById('f-cat').value;
-  const badge=document.getElementById('f-badge').value;
-  const desc=document.getElementById('f-desc').value.trim();
-  if(!name||!price){toast('Please fill name and price!');return;}
-  const eid=document.getElementById('f-edit-id').value;
-  if(eid){
-    const i=PRODUCTS.findIndex(p=>p.id==eid);
-    if(i>-1)PRODUCTS[i]={...PRODUCTS[i],name,price,was,emoji,cat,badge,desc};
-    toast('Product updated!');
+function openAddProduct() {
+  editingProdId = null;
+  document.getElementById('prodModalTitle').innerHTML='Add <em>Product</em>';
+  document.getElementById('pm-name').value='';
+  document.getElementById('pm-cat').value='Dresses';
+  document.getElementById('pm-badge').value='';
+  document.getElementById('pm-price').value='';
+  document.getElementById('pm-was').value='';
+  document.getElementById('pm-desc').value='';
+  document.querySelectorAll('.emoji-opt').forEach(e=>e.classList.remove('sel'));
+  document.querySelector('.emoji-opt[data-e="👗"]').classList.add('sel');
+  document.getElementById('prodModal').classList.add('open');
+}
+
+function editProd(id) {
+  const p=products.find(x=>x.id===id);if(!p)return;
+  editingProdId=id;
+  document.getElementById('prodModalTitle').innerHTML='Edit <em>Product</em>';
+  document.getElementById('pm-name').value=p.name;
+  document.getElementById('pm-cat').value=p.cat;
+  document.getElementById('pm-badge').value=p.badge||'';
+  document.getElementById('pm-price').value=p.price;
+  document.getElementById('pm-was').value=p.was||'';
+  document.getElementById('pm-desc').value=p.desc||'';
+  document.querySelectorAll('.emoji-opt').forEach(e=>{e.classList.toggle('sel',e.dataset.e===p.emoji)});
+  document.getElementById('prodModal').classList.add('open');
+}
+
+function pickEmoji(el) {
+  document.querySelectorAll('.emoji-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function saveProd() {
+  const name=document.getElementById('pm-name').value.trim();
+  const cat=document.getElementById('pm-cat').value;
+  const badge=document.getElementById('pm-badge').value||null;
+  const price=parseInt(document.getElementById('pm-price').value);
+  const was=parseInt(document.getElementById('pm-was').value)||null;
+  const desc=document.getElementById('pm-desc').value.trim();
+  const emoji=document.querySelector('.emoji-opt.sel')?.dataset.e||'👗';
+  if(!name||!price){showToast('Name and price are required','error');return;}
+  if(editingProdId) {
+    const p=products.find(x=>x.id===editingProdId);
+    if(p){ Object.assign(p,{name,cat,badge,price,was,desc,emoji}); }
+    showToast('Product updated ✓','success');
   } else {
-    PRODUCTS.push({id:nextId(PRODUCTS),name,price,was,emoji,cat,badge,desc,stock:10});
-    toast('Product added!');
+    const newId=Math.max(0,...products.map(p=>p.id))+1;
+    products.push({id:newId,name,cat,emoji,price,was,badge,desc});
+    showToast('Product added ✓','success');
+    addNotif('order','🆕','New product added: '+name,'Just now');
   }
   save();
-  nav('products',document.querySelectorAll('.nav-item')[2]);
-}
-function editProduct(id){
-  const p=PRODUCTS.find(x=>x.id===id);if(!p)return;
-  document.getElementById('f-name').value=p.name;
-  document.getElementById('f-price').value=p.price;
-  document.getElementById('f-was').value=p.was||'';
-  document.getElementById('f-emoji').value=p.emoji;
-  document.getElementById('f-cat').value=p.cat;
-  document.getElementById('f-badge').value=p.badge||'';
-  document.getElementById('f-desc').value=p.desc||'';
-  document.getElementById('f-edit-id').value=id;
-  document.getElementById('add-page-title').innerHTML='Edit <span>Product</span>';
-  document.getElementById('save-prod-btn').textContent='Update Product';
-  nav('add-product',document.querySelectorAll('.nav-item')[5]);
-}
-function cancelEdit(){nav('products',document.querySelectorAll('.nav-item')[2]);}
-function deleteProduct(id,name){deleteTargetId=id;document.getElementById('del-name').textContent=name;openModal('del-modal');}
-function confirmDelete(){PRODUCTS=PRODUCTS.filter(p=>p.id!==deleteTargetId);save();closeModal('del-modal');toast('Product deleted.');renderProducts();}
-
-// ── ORDERS ──────────────────────────────────────────
-let orderFilter='',orderStatus='All';
-function renderOrders(list){
-  const arr=(list||(orderStatus==='All'?ORDERS:ORDERS.filter(o=>o.status===orderStatus))).filter(o=>o.id.toLowerCase().includes(orderFilter.toLowerCase())||o.customer.toLowerCase().includes(orderFilter.toLowerCase()));
-  const tb=document.getElementById('orders-table');
-  if(!arr.length){tb.innerHTML=`<tr><td colspan="8"><div class="empty"><div class="empty-icon">📋</div><div class="empty-text">No orders found</div></div></td></tr>`;return;}
-  tb.innerHTML=arr.map(o=>`
-    <tr>
-      <td><span style="color:var(--a3);font-family:monospace;font-size:12px">${o.id}</span></td>
-      <td><div style="font-weight:500;color:var(--ink)">${o.customer}</div><div style="font-size:11px;color:var(--ink3)">${o.email}</div></td>
-      <td>${o.items.length} item${o.items.length>1?'s':''}</td>
-      <td style="font-family:var(--fd);font-size:16px">₹${o.total.toLocaleString('en-IN')}</td>
-      <td><span style="font-size:12px">${o.payment}</span></td>
-      <td>${statusBadge(o.status)}</td>
-      <td style="font-size:12px;color:var(--ink3)">${fmtDate(o.date)}</td>
-      <td><button class="btn btn-ghost btn-sm" onclick="viewOrder('${o.id}')">View</button></td>
-    </tr>`).join('');
-}
-function filterOrders(q){orderFilter=q;renderOrders();}
-function filterOrdersStatus(s){orderStatus=s;renderOrders();}
-
-function viewOrder(id){
-  const o=ORDERS.find(x=>x.id===id);if(!o)return;
-  currentOrderId=id;
-  document.getElementById('modal-order-title').textContent=o.id+' — '+o.customer;
-  document.getElementById('modal-order-body').innerHTML=`
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px">
-      <div style="background:var(--bg3);border-radius:8px;padding:14px">
-        <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">Customer</div>
-        <div style="font-weight:500;color:var(--ink)">${o.customer}</div>
-        <div style="font-size:12px;color:var(--ink3)">${o.email}</div>
-        <div style="font-size:12px;color:var(--ink3)">${o.phone}</div>
-      </div>
-      <div style="background:var(--bg3);border-radius:8px;padding:14px">
-        <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">Delivery Address</div>
-        <div style="font-size:13px;color:var(--ink2)">${o.address}</div>
-      </div>
-    </div>
-    <div style="margin-bottom:16px">
-      <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px">Order Items</div>
-      ${o.items.map(i=>`<div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--bg3);border-radius:6px;margin-bottom:6px;font-size:13px">
-        <span>${i.name} × ${i.qty}</span>
-        <span style="color:var(--a3);font-family:var(--fd);font-size:15px">₹${(i.price).toLocaleString('en-IN')}</span>
-      </div>`).join('')}
-      <div style="display:flex;justify-content:space-between;padding:10px 12px;font-size:14px;font-weight:500;border-top:1px solid var(--border);margin-top:4px">
-        <span>Total</span>
-        <span style="color:var(--a3);font-family:var(--fd);font-size:18px">₹${o.total.toLocaleString('en-IN')}</span>
-      </div>
-    </div>
-    <div style="display:flex;gap:10px;font-size:12px">
-      <span style="color:var(--ink3)">Payment: <span style="color:var(--ink)">${o.payment}</span></span>
-      <span style="color:var(--border2)">|</span>
-      <span style="color:var(--ink3)">Ref: <span style="color:var(--ink);font-family:monospace">${o.payId}</span></span>
-      <span style="color:var(--border2)">|</span>
-      <span style="color:var(--ink3)">Date: <span style="color:var(--ink)">${fmtDate(o.date)}</span></span>
-    </div>`;
-
-  const allSteps=['Ordered','Confirmed','Shipped','Delivered','Cancelled'];
-  const doneSteps=o.timeline;
-  document.getElementById('modal-timeline').innerHTML=allSteps.filter(s=>s!=='Cancelled'||doneSteps.includes('Cancelled')).map(s=>{
-    const done=doneSteps.includes(s);
-    const active=doneSteps[doneSteps.length-1]===s;
-    const icons={Ordered:'📦',Confirmed:'✅',Shipped:'🚚',Delivered:'🏠',Cancelled:'❌'};
-    return`<div class="timeline-step">
-      <div class="tl-dot ${active?'active':done?'done':'pending'}">${icons[s]||'○'}</div>
-      <div class="tl-info">
-        <div class="tl-label" style="color:${done?'var(--ink)':'var(--ink3)'}">${s}</div>
-        <div class="tl-time">${done?(active?'Current status':'Completed'):''}</div>
-      </div>
-    </div>`;
-  }).join('');
-  openModal('order-modal');
+  document.getElementById('prodModal').classList.remove('open');
+  renderProducts();
+  renderDashboard();
 }
 
-function updateOrderStatus(id,status){
-  const o=ORDERS.find(x=>x.id===id);if(!o)return;
-  o.status=status;
-  if(!o.timeline.includes(status))o.timeline.push(status);
-  save();
-  closeModal('order-modal');
-  toast(`Order ${id} marked as ${status}`);
-  renderOrders();renderDashboard();
+function closeProdModal(e){ if(e.target.id==='prodModal') document.getElementById('prodModal').classList.remove('open'); }
+
+// ── ANALYTICS ──
+function renderAnalytics() {
+  const rev=orders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+o.total,0);
+  const views=Math.round(orders.length*220+1400);
+  const cvr=views?((orders.length/views)*100).toFixed(1)+'%':'0%';
+  const aov=orders.length?'₹'+Math.round(rev/orders.length).toLocaleString('en-IN'):'₹0';
+  document.getElementById('an-views').textContent=views.toLocaleString('en-IN');
+  document.getElementById('an-cvr').textContent=cvr;
+  document.getElementById('an-aov').textContent=aov;
+  // top prod by name frequency
+  const freq={};
+  orders.forEach(o=>o.items.forEach(i=>{ freq[i.name]=(freq[i.name]||0)+i.qty; }));
+  const top=Object.entries(freq).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('an-top').textContent=top?top[0]:'—';
+  // monthly chart
+  const months=['Jan','Feb','Mar','Apr','May','Jun'];
+  const base=[12000,18000,15000,22000,19000,rev||8000];
+  const max=Math.max(...base);
+  document.getElementById('monthChart').innerHTML=base.map((v,i)=>`
+    <div class="bar-col">
+      <div class="bar-val">₹${Math.round(v/1000)}k</div>
+      <div class="bar" style="height:${Math.round(v/max*100)}%"></div>
+      <div class="bar-label">${months[i]}</div>
+    </div>`).join('');
+  // top products table
+  const topList=products.map(p=>({...p,sold:freq[p.name]||0})).sort((a,b)=>b.sold-a.sold).slice(0,8);
+  document.getElementById('topProdTbody').innerHTML=topList.map((p,i)=>`<tr>
+    <td style="color:var(--ink3)">${i+1}</td>
+    <td>${p.emoji} ${p.name}</td>
+    <td><span class="badge new">${p.cat}</span></td>
+    <td>₹${p.price.toLocaleString('en-IN')}</td>
+    <td style="color:var(--green)">${p.sold}</td>
+    <td style="color:var(--ink);font-weight:500">₹${(p.price*p.sold).toLocaleString('en-IN')}</td>
+  </tr>`).join('');
 }
 
-// ── PAYMENTS ──────────────────────────────────────────
-function renderPayments(){
-  const paid=ORDERS.filter(o=>o.status!=='Cancelled'&&o.payment!=='COD');
-  const cod=ORDERS.filter(o=>o.payment==='COD'&&o.status!=='Delivered'&&o.status!=='Cancelled');
-  const total=paid.reduce((s,o)=>s+o.total,0);
-  const pending=cod.reduce((s,o)=>s+o.total,0);
-  document.getElementById('pay-total').textContent='₹'+total.toLocaleString('en-IN');
-  document.getElementById('pay-pending').textContent='₹'+pending.toLocaleString('en-IN');
-  document.getElementById('pay-count').textContent=ORDERS.filter(o=>o.status!=='Cancelled').length;
+// ── CUSTOMERS ──
+function renderCustomers() {
+  const q=(document.getElementById('custSearch').value||'').toLowerCase();
+  const custMap={};
+  orders.forEach(o=>{
+    if(!custMap[o.phone]) custMap[o.phone]={name:o.name,phone:o.phone,city:o.city,orders:0,spent:0,last:o.date};
+    custMap[o.phone].orders++;
+    custMap[o.phone].spent+=o.total;
+    if(o.date>custMap[o.phone].last) custMap[o.phone].last=o.date;
+  });
+  let list=Object.values(custMap).sort((a,b)=>b.spent-a.spent);
+  if(q) list=list.filter(c=>c.name.toLowerCase().includes(q)||c.phone.includes(q)||c.city.toLowerCase().includes(q));
+  document.getElementById('custTbody').innerHTML=list.map(c=>`<tr>
+    <td>${c.name}</td>
+    <td style="color:var(--ink3)">${c.phone}</td>
+    <td>${c.city}</td>
+    <td style="color:var(--a1)">${c.orders}</td>
+    <td style="color:var(--ink);font-weight:500">₹${c.spent.toLocaleString('en-IN')}</td>
+    <td style="font-size:11px;color:var(--ink3)">${c.last}</td>
+  </tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:var(--ink3);padding:30px">No customers yet</td></tr>';
+}
 
-  const icons={UPI:'💳',Card:'🏦',COD:'💵'};
-  document.getElementById('payments-list').innerHTML=ORDERS.map(o=>`
-    <div class="payment-row">
-      <div class="payment-icon ${o.payment.toLowerCase()}">${icons[o.payment]||'💳'}</div>
-      <div class="payment-details">
-        <div class="payment-name">${o.customer} — ${o.id}</div>
-        <div class="payment-id">${o.payId}</div>
-      </div>
-      <div>
-        <div class="payment-amount">₹${o.total.toLocaleString('en-IN')}</div>
-        <div class="payment-date">${fmtDate(o.date)}</div>
-      </div>
-      <div style="margin-left:16px">${statusBadge(o.status)}</div>
+// ── CHARTS ──
+function renderRevenueChart() {
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const base=[4200,6800,3100,8900,5600,11200,9800];
+  const extra=orders.slice(-7).map(o=>o.total);
+  const vals=base.map((v,i)=>v+(extra[i]||0));
+  const max=Math.max(...vals);
+  document.getElementById('revenueChart').innerHTML=vals.map((v,i)=>`
+    <div class="bar-col">
+      <div class="bar-val">₹${Math.round(v/1000)}k</div>
+      <div class="bar" style="height:${Math.round(v/max*100)}%"></div>
+      <div class="bar-label">${days[i]}</div>
     </div>`).join('');
 }
 
-// ── BOOT ──────────────────────────────────────────────
-// Auto-login for demo
-window.onload=()=>{
-  // Show login screen — remove below line to require real login
-  // initDashboard(); document.getElementById('login-screen').style.display='none';
-};
+function renderDonut() {
+  const cats={};
+  orders.forEach(o=>o.items.forEach(i=>{ const p=products.find(x=>x.name===i.name); if(p) cats[p.cat]=(cats[p.cat]||0)+i.qty; }));
+  const colors=['#C4856A','#4CAF8A','#6A9FD4','#D4AF6A'];
+  const catList=Object.entries(cats).length?Object.entries(cats):[['Dresses',4],['Tops',3],['Bottoms',3],['Accessories',2]];
+  const total=catList.reduce((s,[,v])=>s+v,0);
+  const canvas=document.getElementById('donutChart');
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,90,90);
+  let start=-Math.PI/2;
+  catList.forEach(([,v],i)=>{
+    const slice=(v/total)*Math.PI*2;
+    ctx.beginPath();ctx.moveTo(45,45);
+    ctx.arc(45,45,42,start,start+slice);
+    ctx.closePath();ctx.fillStyle=colors[i%colors.length];ctx.fill();
+    start+=slice;
+  });
+  ctx.beginPath();ctx.arc(45,45,24,0,Math.PI*2);ctx.fillStyle='#181714';ctx.fill();
+  document.getElementById('donutLegend').innerHTML=catList.map(([k,v],i)=>`
+    <div class="dl-item"><div class="dl-dot" style="background:${colors[i%colors.length]}"></div>${k} (${v})</div>`).join('');
+}
+
+// ── NOTIFICATIONS ──
+function renderNotifs() {
+  const unread=notifications.filter(n=>!n.read).length;
+  document.getElementById('notifBadge').textContent=unread;
+  document.getElementById('notifBadge').style.display=unread?'':'none';
+  document.getElementById('notifList').innerHTML=notifications.map(n=>`
+    <div class="notif-item ${n.type}" id="notif-${n.id}">
+      <span class="notif-ico">${n.ico}</span>
+      <div class="notif-body" style="flex:1">
+        <p style="${!n.read?'color:var(--ink)':''}">${n.msg}</p>
+        <span>${n.time}</span>
+      </div>
+      <span class="notif-time">${n.read?'':'<span style="color:var(--a1);font-size:9px;letter-spacing:.1em">NEW</span>'}</span>
+      <button class="notif-dismiss" onclick="dismissNotif(${n.id})">✕</button>
+    </div>`).join('')||'<div class="empty"><span class="empty-ico">🔔</span><p>All caught up!</p></div>';
+  notifications.forEach(n=>n.read=true);
+  save();
+}
+
+function addNotif(type,ico,msg,time){
+  notifications.unshift({id:Date.now(),type,ico,msg,time,read:false});
+  save();
+  const b=document.getElementById('notifBadge');
+  b.textContent=parseInt(b.textContent||0)+1;
+  b.style.display='';
+}
+
+function dismissNotif(id){
+  notifications=notifications.filter(n=>n.id!==id);
+  save(); renderNotifs();
+}
+
+function clearAllNotifs(){
+  notifications=[];save();renderNotifs();
+  showToast('All notifications cleared','success');
+}
+
+// ── SETTINGS ──
+function saveSettings(){
+  const name=document.getElementById('set-name').value;
+  const upi=document.getElementById('set-upi').value;
+  try{localStorage.setItem('lumiere_settings',JSON.stringify({name,upi,ship:document.getElementById('set-ship').value,ann:document.getElementById('set-ann').value}));}catch(e){}
+  showToast('Settings saved ✓','success');
+}
+
+function exportOrders(){
+  const blob=new Blob([JSON.stringify(orders,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lumiere-orders.json';a.click();
+  showToast('Orders exported','success');
+}
+function exportProducts(){
+  const blob=new Blob([JSON.stringify(products,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lumiere-products.json';a.click();
+  showToast('Products exported','success');
+}
+
+function confirmClearOrders(){
+  showConfirm('Clear All Orders?','This will permanently delete all order history. This cannot be undone.',()=>{
+    orders=[];save();renderDashboard();showToast('All orders cleared','success');
+  },'Clear All');
+}
+
+// ── CONFIRM DIALOG ──
+function showConfirm(title,msg,onOk,btnLabel='Confirm'){
+  document.getElementById('confirmTitle').textContent=title;
+  document.getElementById('confirmMsg').textContent=msg;
+  const btn=document.getElementById('confirmOkBtn');
+  btn.textContent=btnLabel;
+  btn.onclick=()=>{ document.getElementById('confirmOverlay').classList.remove('open'); onOk(); };
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+
+function confirmDeleteProd(id){
+  showConfirm('Delete Product?','This product will be removed from the catalogue.',()=>{
+    products=products.filter(p=>p.id!==id);save();renderProducts();renderDashboard();showToast('Product deleted','success');
+  },'Delete');
+}
+
+function confirmDeleteOrder(id){
+  document.getElementById('orderModal').classList.remove('open');
+  showConfirm('Delete Order?','Order '+id+' will be permanently removed.',()=>{
+    orders=orders.filter(o=>o.id!==id);save();renderOrders();renderDashboard();showToast('Order deleted','success');
+  },'Delete');
+}
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg,type=''){
+  const t=document.getElementById('adminToast');
+  t.textContent=msg;t.className='admin-toast show '+(type||'');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+function refreshData(){
+  load();
+  if(currentView==='dashboard') renderDashboard();
+  else if(currentView==='orders') renderOrders();
+  else if(currentView==='payments') renderPayments();
+  else if(currentView==='products') renderProducts();
+  else if(currentView==='analytics') renderAnalytics();
+  else if(currentView==='customers') renderCustomers();
+  showToast('Data refreshed ✓','success');
+}
+
+// ── INIT ──
+load();
+renderDashboard();
 </script>
 </body>
 </html>
