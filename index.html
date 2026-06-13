@@ -821,7 +821,7 @@ function placeOrder(){
     `<strong>Est. Delivery:</strong> 3–5 business days`;
   document.getElementById('chkSuccess').classList.add('show');
   // clear cart after order
-  cart=[];sc();ucu();rp();
+  
   // write order to localStorage for admin panel
   try {
     const orders = JSON.parse(localStorage.getItem('lumiere_orders_v1') || '[]');
