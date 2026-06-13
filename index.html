@@ -822,6 +822,21 @@ function placeOrder(){
   document.getElementById('chkSuccess').classList.add('show');
   // clear cart after order
   cart=[];sc();ucu();rp();
+  // write order to localStorage for admin panel
+  try {
+    const orders = JSON.parse(localStorage.getItem('lumiere_orders_v1') || '[]');
+    orders.push({
+      id: 'LUM-' + String(orders.length + 1).padStart(5, '0'),
+      timestamp: Date.now(),
+      status: 'pending',
+      customer: { name, phone, address: addr + ', ' + city + ' - ' + pin },
+      items: cart.map(i => ({ name: i.name, qty: i.qty, price: i.price })),
+      total: cart.reduce((s, i) => s + i.price * i.qty, 0)
+    });
+    localStorage.setItem('lumiere_orders_v1', JSON.stringify(orders));
+  } catch(e) {}
+  // clear cart after order
+  cart=[];sc();ucu();rp();
 }
 
 load();rp();ucu();
