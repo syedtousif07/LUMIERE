@@ -821,21 +821,30 @@ function placeOrder(){
     `<strong>Est. Delivery:</strong> 3–5 business days`;
 document.getElementById('chkSuccess').classList.add('show');
   // write order to localStorage for admin panel
-  try {
-    const orders = JSON.parse(localStorage.getItem('lumiere_orders_v1') || '[]');
-    const cartSnapshot = cart.map(i => ({ name: i.name, qty: i.qty, price: i.price, size: i.size, emoji: i.emoji }));
-    const totalSnapshot = cart.reduce((s, i) => s + i.price * i.qty, 0);
-    orders.push({
-      id: 'LUM-' + String(orders.length + 1).padStart(5, '0'),
-      timestamp: Date.now(),
-      status: 'pending',
-      customer: { name, phone, address: addr + ', ' + city + ' - ' + pin },
-      items: cartSnapshot,
-      total: totalSnapshot,
-      payment: document.querySelector('.pm-opt.active .pm-name').textContent
-    });
-    localStorage.setItem('lumiere_orders_v1', JSON.stringify(orders));
-  } catch(e) {}
+// Save order to Firebase
+try {
+  const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+  const { getDatabase, ref, push } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
+  const app = initializeApp({
+    apiKey: "AIzaSyCqx3oX4lcQsPJoEiY4x0Pp0p_kk-UUvQU",
+    authDomain: "lumiere-07.firebaseapp.com",
+    databaseURL: "https://lumiere-07-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "lumiere-07",
+    storageBucket: "lumiere-07.firebasestorage.app",
+    messagingSenderId: "419131400096",
+    appId: "1:419131400096:web:d1d36f649b3a7eba148ec5"
+  }, 'lumiere-store');
+  const db = getDatabase(app);
+  await push(ref(db, 'orders'), {
+    id: 'LUM-' + Date.now().toString(36).toUpperCase(),
+    timestamp: Date.now(),
+    status: 'pending',
+    customer: { name, phone, address: addr + ', ' + city + ' - ' + pin },
+    items: cart.map(i => ({ name: i.name, qty: i.qty, price: i.price, size: i.size, emoji: i.emoji })),
+    total: cart.reduce((s, i) => s + i.price * i.qty, 0),
+    payment: document.querySelector('.pm-opt.active .pm-name').textContent
+  });
+} catch(e) { console.error('Order save failed:', e); }
   // clear cart after order
   cart=[];sc();ucu();rp();
   
