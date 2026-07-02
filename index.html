@@ -412,12 +412,7 @@ footer{background:var(--foot-bg);padding:72px 100px 48px;display:grid;grid-templ
   </div>
 </div>
 
-<div class="cats" id="cats">
-  <div class="cat-c" onclick="fp('Dresses',null)"><span class="ce">👗</span><p class="cn">Dresses</p><p class="ck">Styles</p></div>
-  <div class="cat-c" onclick="fp('Tops',null)"><span class="ce">👚</span><p class="cn">Tops</p><p class="ck">Styles</p></div>
-  <div class="cat-c" onclick="fp('Bottoms',null)"><span class="ce">👖</span><p class="cn">Bottoms</p><p class="ck">Styles</p></div>
-  <div class="cat-c" onclick="fp('Accessories',null)"><span class="ce">👜</span><p class="cn">Accessories</p><p class="ck">Styles</p></div>
-</div>
+<div class="cats" id="cats"></div>
 
 <section class="sec" id="shop">
   <div class="sec-hdr">
@@ -618,10 +613,19 @@ const FALLBACK = [
   {id:12,name:'Beaded Clutch',cat:'Accessories',emoji:'💜',price:1499,was:null,badge:'New',desc:'An evening clutch with intricate beadwork. Small but impactful — the perfect finishing touch.',sizes:'One Size'},
 ];
 
+// ── CATEGORY FALLBACK (shown instantly while Firebase loads) ──
+const CAT_FALLBACK = [
+  {name:'Dresses',     emoji:'👗'},
+  {name:'Tops',        emoji:'👚'},
+  {name:'Bottoms',     emoji:'👖'},
+  {name:'Accessories', emoji:'👜'},
+];
+
 // ── STATE ──
 const THEMES = {terracotta:{label:'Terra',em:'👗'},midnight:{label:'Night',em:'🌙'},emerald:{label:'Forest',em:'🌿'},blush:{label:'Blush',em:'🌸'},obsidian:{label:'Gold',em:'💎'}};
 const CK='lumiere_cart_v3', WK='lumiere_wish_v3', TK='lumiere_theme_v3';
 let PRODS = FALLBACK.slice(); // start with fallback, replaced by Firebase
+let CATS = CAT_FALLBACK.slice(); // start with fallback, replaced by Firebase
 let cart=[], wish=[], af='All', curP=null;
 let fbApp, fbDb;
 
@@ -672,6 +676,22 @@ function initFirebase() {
       console.error('Firebase error:', err);
       setSyncStatus(false);
     });
+
+    // Listen for category changes in real-time (powers the filter buttons)
+    onValue(ref(fbDb, 'categories'), snap => {
+      const raw = snap.val();
+      if (raw && Array.isArray(raw) && raw.length) {
+        CATS = raw.filter(c => c && c.name);
+        rc(); // re-render category buttons with live data
+      } else if (raw && typeof raw === 'object') {
+        // Defensive: Firebase can store a sparse array as an object
+        CATS = Object.keys(raw).sort((a,b)=>a-b).map(k=>raw[k]).filter(c => c && c.name);
+        rc();
+      }
+      // If empty/missing, keep showing CAT_FALLBACK — nothing to do
+    }, err => {
+      console.error('Categories error:', err);
+    });
   } catch(e) {
     console.error('Firebase init failed:', e);
     setSyncStatus(false);
@@ -714,6 +734,18 @@ window.fp = function(cat,btn){
   rp();
   document.getElementById('shop').scrollIntoView({behavior:'smooth'});
 };
+
+function rc(){
+  const wrap = document.getElementById('cats');
+  if(!wrap) return;
+  if(!CATS.length){ wrap.innerHTML=''; return; }
+  wrap.innerHTML = CATS.map(c=>`
+    <div class="cat-c" onclick="fp(${JSON.stringify(c.name)},null)">
+      <span class="ce">${c.emoji||'🏷'}</span>
+      <p class="cn">${c.name}</p>
+      <p class="ck">Styles</p>
+    </div>`).join('');
+}
 
 function rp(){
   const f = af==='All' ? PRODS
@@ -894,6 +926,7 @@ window.placeOrder = async function(){
 
 // ── BOOT ──
 load();
+rc();    // render fallback categories immediately
 rp();    // render fallback products immediately
 ucu();
 initFirebase(); // then connect Firebase — updates render automatically when data arrives
