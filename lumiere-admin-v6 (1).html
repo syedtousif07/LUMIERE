@@ -275,6 +275,7 @@ tbody tr:hover td{background:var(--s2);color:var(--txt)}
     <div class="nv on" onclick="nav('dashboard',this)"><span class="nv-ico">◈</span> Dashboard</div>
     <div class="nv" onclick="nav('orders',this)"><span class="nv-ico">📦</span> Orders <span id="sb-order-cnt" style="margin-left:auto;background:var(--gold);color:#0A0A0B;font-size:.65rem;padding:2px 7px;border-radius:10px;font-weight:600"></span></div>
     <div class="nv" onclick="nav('products',this)"><span class="nv-ico">🛍</span> Products</div>
+    <div class="nv" onclick="nav('categories',this)"><span class="nv-ico">🏷</span> Categories</div>
     <div class="nv" onclick="nav('customers',this)"><span class="nv-ico">👥</span> Customers</div>
     <div class="nv" onclick="nav('analytics',this)"><span class="nv-ico">📊</span> Analytics</div>
     <div class="sb-sec">System</div>
@@ -350,12 +351,20 @@ tbody tr:hover td{background:var(--s2);color:var(--txt)}
   <div class="toolbar">
     <input class="srch" id="prod-srch" placeholder="🔍  Search products…" oninput="renderProds()">
     <button class="filt-btn on" onclick="setPF('All',this)">All</button>
-    <button class="filt-btn" onclick="setPF('Dresses',this)">Dresses</button>
-    <button class="filt-btn" onclick="setPF('Tops',this)">Tops</button>
-    <button class="filt-btn" onclick="setPF('Bottoms',this)">Bottoms</button>
-    <button class="filt-btn" onclick="setPF('Accessories',this)">Accessories</button>
+    <span id="prod-filt-cats" style="display:contents"></span>
   </div>
   <div class="prod-grid" id="prod-grid"></div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="page" id="pg-categories">
+  <div class="sec-hd">
+    <div><h2>Categories</h2><small>Powers the filter buttons on the storefront • drag to reorder</small></div>
+    <button class="btn-primary" onclick="openCatModal()">+ Add Category</button>
+  </div>
+  <div class="set-card" style="padding:10px 14px">
+    <div id="cat-list"></div>
+  </div>
 </div>
 
 <!-- CUSTOMERS -->
@@ -435,12 +444,7 @@ tbody tr:hover td{background:var(--s2);color:var(--txt)}
       </div>
       <div class="form-row">
         <div class="fg"><label class="fl-label">Category</label>
-          <select class="fi-sel" id="pf-cat">
-            <option value="Dresses">Dresses</option>
-            <option value="Tops">Tops</option>
-            <option value="Bottoms">Bottoms</option>
-            <option value="Accessories">Accessories</option>
-          </select>
+          <select class="fi-sel" id="pf-cat"></select>
         </div>
         <div class="fg"><label class="fl-label">Badge</label>
           <select class="fi-sel" id="pf-badge">
@@ -500,11 +504,29 @@ tbody tr:hover td{background:var(--s2);color:var(--txt)}
   </div>
 </div>
 
+<!-- CATEGORY MODAL -->
+<div class="modal-bg" id="cat-modal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-hdr"><h3 id="cm-title">Add Category</h3><button class="modal-close" onclick="closeModal('cat-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="fg"><label class="fl-label">Emoji</label><input class="fi-input" id="cf-emoji" placeholder="👗" style="font-size:1.5rem;text-align:center"></div>
+        <div class="fg" style="flex:2"><label class="fl-label">Name</label><input class="fi-input" id="cf-name" placeholder="e.g. Footwear"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-danger" id="cf-del" style="display:none" onclick="deleteCategory()">Delete</button>
+        <button class="btn-ghost" onclick="closeModal('cat-modal')">Cancel</button>
+        <button class="btn-primary" onclick="saveCategory()">Save Category</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, update, push, remove }
+import { getDatabase, ref, onValue, update, push, remove, set }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const CFG = {
@@ -537,9 +559,18 @@ const SITE_PRODUCTS = [
 const app = initializeApp(CFG);
 const db  = getDatabase(app);
 
+// ── DEFAULT CATEGORIES (seeded into Firebase once, if empty) ──
+const DEFAULT_CATEGORIES = [
+  {name:'Dresses',     emoji:'👗'},
+  {name:'Tops',        emoji:'👚'},
+  {name:'Bottoms',     emoji:'👖'},
+  {name:'Accessories', emoji:'👜'},
+];
+
 // ── STATE ──
 let G = {
   orders: [], products: [], fbProducts: [],
+  categories: [], catSeeding: false, catDragIdx: null,
   pass: localStorage.getItem('lum_pass') || 'lumiere2024',
   ordFilter: 'all', prodFilter: 'All',
   editProdKey: null, curOrderKey: null,
@@ -598,6 +629,31 @@ function initFirebase() {
       : SITE_PRODUCTS.map(p => ({...p, _key:'local-'+p.id}));
     renderProds();
   });
+
+  // Categories listener — powers the storefront's filter buttons live
+  onValue(ref(db,'categories'), snap => {
+    const raw = snap.val();
+    if (raw && Array.isArray(raw) && raw.length) {
+      G.categories = raw;
+    } else if (raw && typeof raw === 'object') {
+      // Defensive: Firebase can store a sparse array as an object
+      G.categories = Object.keys(raw).sort((a,b)=>a-b).map(k=>raw[k]).filter(Boolean);
+    } else if (!G.catSeeding) {
+      G.catSeeding = true;
+      seedCategories(); // one write → onValue fires again with the seeded list
+      return;
+    } else {
+      G.categories = [];
+    }
+    renderCategories();
+  }, err => {
+    toast('Categories error: check DB rules','err');
+  });
+}
+
+async function seedCategories() {
+  try { await set(ref(db,'categories'), DEFAULT_CATEGORIES); }
+  catch(e) { toast('Category seed error: '+e.message,'err'); }
 }
 
 async function seedProducts() {
@@ -637,7 +693,7 @@ window.nav = function(page, el) {
   document.querySelectorAll('.nv').forEach(n => n.classList.remove('on'));
   document.getElementById('pg-'+page).classList.add('on');
   if(el) el.classList.add('on');
-  const titles = {dashboard:'Dashboard',orders:'Orders',products:'Products',customers:'Customers',analytics:'Analytics',settings:'Settings'};
+  const titles = {dashboard:'Dashboard',orders:'Orders',products:'Products',categories:'Categories',customers:'Customers',analytics:'Analytics',settings:'Settings'};
   document.getElementById('pageTitle').textContent = titles[page]||page;
   if(page==='analytics') renderAnalytics();
 };
@@ -855,7 +911,8 @@ window.openProdModal = function(key) {
   document.getElementById('pf-del').style.display = p ? 'block' : 'none';
   document.getElementById('pf-name').value  = p?.name  || '';
   document.getElementById('pf-emoji').value = p?.emoji || '';
-  document.getElementById('pf-cat').value   = p?.cat   || 'Dresses';
+  syncProdCatOptions(); // rebuild category options from current G.categories before setting value
+  document.getElementById('pf-cat').value   = p?.cat || (G.categories[0]?.name || '');
   document.getElementById('pf-badge').value = p?.badge || '';
   document.getElementById('pf-price').value = p?.price || '';
   document.getElementById('pf-was').value   = p?.was   || '';
@@ -1073,6 +1130,135 @@ window.deleteProd = async function() {
   } catch(e) { toast('Delete error: '+e.message,'err'); }
 };
 
+// ── CATEGORIES ──
+// Stored as a single ordered array at 'categories' in Firebase, e.g.
+// [{name:'Dresses',emoji:'👗'}, {name:'Tops',emoji:'👚'}, …]
+// The storefront reads this same array live to render its filter buttons.
+let catEditIdx = null;   // index being edited, or null when adding
+let catDragIdx = null;   // index currently being dragged
+
+// Keeps the product form's Category <select> in sync with G.categories,
+// so it reflects whatever categories currently exist (not a hardcoded list).
+window.syncProdCatOptions = function() {
+  const sel = document.getElementById('pf-cat');
+  if(!sel) return;
+  const prev = sel.value; // preserve selection across re-syncs when possible
+  if(!G.categories.length) {
+    sel.innerHTML = `<option value="">No categories yet</option>`;
+    return;
+  }
+  sel.innerHTML = G.categories.map(c =>
+    `<option value="${c.name}">${c.emoji||'🏷'} ${c.name}</option>`
+  ).join('');
+  if(prev && G.categories.some(c => c.name === prev)) sel.value = prev;
+};
+
+// Keeps the Products page filter pills (All / <categories>) in sync with G.categories.
+window.syncProdFilterPills = function() {
+  const wrap = document.getElementById('prod-filt-cats');
+  if(!wrap) return;
+  // esc(): safe single-quoted string for the inline onclick, and safe display text
+  const esc = s => String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  const escHtml = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  wrap.innerHTML = G.categories.map(c =>
+    `<button class="filt-btn" onclick="setPF('${esc(c.name)}',this)">${escHtml(c.name)}</button>`
+  ).join('');
+  // If the category currently filtered on no longer exists (renamed/deleted), fall back to "All"
+  if(G.prodFilter !== 'All' && !G.categories.some(c => c.name === G.prodFilter)) {
+    G.prodFilter = 'All';
+    renderProds();
+  }
+  // Re-apply the "on" highlight to whichever pill matches the active filter
+  document.querySelectorAll('#pg-products .filt-btn').forEach(b => {
+    b.classList.toggle('on', b.textContent === (G.prodFilter==='All' ? 'All' : G.prodFilter));
+  });
+};
+
+window.renderCategories = function() {
+  const list = document.getElementById('cat-list');
+  syncProdCatOptions();  // keep product form dropdown current whenever categories re-render
+  syncProdFilterPills(); // keep products-page filter pills current whenever categories re-render
+  if(!list) return; // page not in DOM yet
+  if(!G.categories.length) {
+    list.innerHTML = `<div class="empty" style="padding:40px;text-align:center;color:var(--txt-m)">No categories yet — click "+ Add Category" to create one.</div>`;
+    return;
+  }
+  list.innerHTML = G.categories.map((c,i) => `
+    <div draggable="true"
+      ondragstart="catDragIdx=${i};this.style.opacity='.4'"
+      ondragend="this.style.opacity='1'"
+      ondragover="event.preventDefault()"
+      ondrop="dropCatOn(event,${i})"
+      style="display:flex;align-items:center;gap:14px;padding:14px 10px;border-bottom:1px solid var(--bdr);cursor:grab"
+      title="Drag to reorder">
+      <span style="color:var(--txt-m);font-size:.9rem;line-height:1">⠿</span>
+      <span style="font-size:1.4rem;width:32px;text-align:center;flex-shrink:0">${c.emoji||'🏷'}</span>
+      <span style="flex:1;font-family:var(--fb);font-size:.95rem;color:var(--txt)">${c.name}</span>
+      <button class="btn-ghost" onclick="openCatModal(${i})" style="padding:6px 14px;font-size:.75rem">Edit</button>
+    </div>`).join('');
+};
+
+window.dropCatOn = function(e, toIdx) {
+  e.preventDefault();
+  if(catDragIdx === null || catDragIdx === toIdx) return;
+  const arr = G.categories.slice();
+  const moved = arr.splice(catDragIdx, 1)[0];
+  arr.splice(toIdx, 0, moved);
+  catDragIdx = null;
+  G.categories = arr;      // optimistic local reorder for instant feedback
+  renderCategories();
+  saveCategoriesOrder();   // persist to Firebase
+};
+
+async function saveCategoriesOrder() {
+  try { await set(ref(db,'categories'), G.categories); }
+  catch(e) { toast('Reorder error: '+e.message,'err'); }
+}
+
+window.openCatModal = function(idx) {
+  catEditIdx = (typeof idx === 'number') ? idx : null;
+  const isEdit = catEditIdx !== null;
+  document.getElementById('cm-title').textContent = isEdit ? 'Edit Category' : 'Add Category';
+  document.getElementById('cf-del').style.display = isEdit ? 'inline-block' : 'none';
+  const c = isEdit ? G.categories[catEditIdx] : {name:'',emoji:''};
+  document.getElementById('cf-name').value = c.name || '';
+  document.getElementById('cf-emoji').value = c.emoji || '';
+  document.getElementById('cat-modal').classList.add('open');
+};
+
+window.saveCategory = async function() {
+  const name = document.getElementById('cf-name').value.trim();
+  const emoji = document.getElementById('cf-emoji').value.trim() || '🏷';
+  if(!name) { toast('Category name is required','err'); return; }
+
+  const arr = G.categories.slice();
+  const dupIdx = arr.findIndex((c,i) => c.name.toLowerCase() === name.toLowerCase() && i !== catEditIdx);
+  if(dupIdx !== -1) { toast('A category with that name already exists','err'); return; }
+
+  if(catEditIdx !== null) {
+    arr[catEditIdx] = {name, emoji};
+  } else {
+    arr.push({name, emoji});
+  }
+  try {
+    await set(ref(db,'categories'), arr);
+    toast(catEditIdx !== null ? 'Category updated' : 'Category added','ok');
+    closeModal('cat-modal');
+  } catch(e) { toast('Save error: '+e.message,'err'); }
+};
+
+window.deleteCategory = async function() {
+  if(catEditIdx === null) { toast('No category selected','err'); return; }
+  if(!confirm('Delete this category? It will disappear from the storefront filters.')) return;
+  const arr = G.categories.slice();
+  arr.splice(catEditIdx, 1);
+  try {
+    await set(ref(db,'categories'), arr);
+    toast('Category deleted','ok');
+    closeModal('cat-modal');
+  } catch(e) { toast('Delete error: '+e.message,'err'); }
+};
+
 // ── CUSTOMERS ──
 window.renderCustomers = function() {
   const q = document.getElementById('cust-srch')?.value.toLowerCase()||'';
@@ -1182,6 +1368,7 @@ window.closeModal = function(id) {
 };
 document.getElementById('ord-modal').addEventListener('click',e=>{if(e.target.id==='ord-modal')closeModal('ord-modal');});
 document.getElementById('prod-modal').addEventListener('click',e=>{if(e.target.id==='prod-modal')closeModal('prod-modal');});
+document.getElementById('cat-modal').addEventListener('click',e=>{if(e.target.id==='cat-modal')closeModal('cat-modal');});
 
 // ── TOAST ──
 let _tt;
