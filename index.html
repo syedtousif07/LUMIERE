@@ -633,6 +633,14 @@ const FALLBACK = [
   {id:12,name:'Beaded Clutch',cat:'Accessories',emoji:'💜',price:1499,was:null,badge:'New',desc:'An evening clutch with intricate beadwork. Small but impactful — the perfect finishing touch.',sizes:'One Size'},
 ];
 
+// ── FALLBACK CATEGORIES (shown instantly while Firebase loads) ──
+const CAT_FALLBACK = [
+  {name:'Dresses', emoji:'👗'},
+  {name:'Tops', emoji:'👚'},
+  {name:'Bottoms', emoji:'👖'},
+  {name:'Accessories', emoji:'👜'},
+];
+
 // ── STATE ──
 const THEMES = {terracotta:{label:'Terra',em:'👗'},midnight:{label:'Night',em:'🌙'},emerald:{label:'Forest',em:'🌿'},blush:{label:'Blush',em:'🌸'},obsidian:{label:'Gold',em:'💎'}};
 const CK='lumiere_cart_v3', WK='lumiere_wish_v3', TK='lumiere_theme_v3', COUPON_KEY='lumiere_coupons_v1';
@@ -1086,4 +1094,3 @@ initFirebase(); // then connect Firebase — updates render automatically when d
 </script>
 </body>
 </html>
-
